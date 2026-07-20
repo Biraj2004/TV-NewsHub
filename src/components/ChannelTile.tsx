@@ -1,0 +1,162 @@
+import React from 'react';
+import { View, Text, StyleSheet, Image, Pressable } from 'react-native';
+import { useLiveChannelResolver } from '../hooks/useLiveChannelResolver';
+
+export interface Channel {
+  id: string;
+  name: string;
+  language: string;
+  country: string;
+  logo: string;
+  youtubeChannelId: string;
+}
+
+interface ChannelTileProps {
+  channel: Channel;
+  onPress: (channel: Channel, videoId: string) => void;
+  hasTVPreferredFocus?: boolean;
+}
+
+export function ChannelTile({ channel, onPress, hasTVPreferredFocus }: ChannelTileProps) {
+  const { videoId, isLoading, isError } = useLiveChannelResolver(channel.youtubeChannelId);
+
+  if (isLoading) {
+    // Skeleton placeholder card during load
+    return (
+      <View style={[styles.tile, styles.skeleton]}>
+        <View style={styles.skeletonLogo} />
+        <View style={styles.skeletonText} />
+      </View>
+    );
+  }
+
+  const isOffline = isError || !videoId;
+
+  return (
+    <Pressable
+      hasTVPreferredFocus={hasTVPreferredFocus}
+      onPress={() => {
+        if (!isOffline && videoId) {
+          onPress(channel, videoId);
+        }
+      }}
+      style={({ focused }) => [
+        styles.tile,
+        focused && styles.tileFocused,
+        isOffline && styles.tileOffline,
+      ]}
+    >
+      {({ focused }) => (
+        <View style={styles.contentContainer}>
+          {channel.logo ? (
+            <Image source={{ uri: channel.logo }} style={styles.logo} resizeMode="contain" />
+          ) : (
+            <View style={styles.logoPlaceholder}>
+              <Text style={styles.logoPlaceholderText}>{channel.name[0]}</Text>
+            </View>
+          )}
+          <Text style={[styles.name, focused && styles.nameFocused]}>{channel.name}</Text>
+          
+          {isOffline && (
+            <View style={styles.offlineBadge}>
+              <Text style={styles.offlineText}>OFFLINE</Text>
+            </View>
+          )}
+        </View>
+      )}
+    </Pressable>
+  );
+}
+
+const styles = StyleSheet.create({
+  tile: {
+    backgroundColor: '#1c1c20',
+    aspectRatio: 16 / 11,
+    borderRadius: 12,
+    borderWidth: 2,
+    borderColor: '#2e2e32',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 12,
+    position: 'relative',
+    margin: 8,
+    flex: 1,
+  },
+  tileFocused: {
+    borderColor: '#ffffff',
+    transform: [{ scale: 1.05 }],
+    backgroundColor: '#25252a',
+  },
+  tileOffline: {
+    opacity: 0.6,
+  },
+  contentContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%',
+    height: '100%',
+  },
+  logo: {
+    width: 60,
+    height: 60,
+    borderRadius: 8,
+    backgroundColor: '#0b0b0d',
+    marginBottom: 8,
+  },
+  logoPlaceholder: {
+    width: 60,
+    height: 60,
+    borderRadius: 8,
+    backgroundColor: '#2e2e32',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  logoPlaceholderText: {
+    color: '#ffffff',
+    fontSize: 24,
+    fontWeight: 'bold',
+  },
+  name: {
+    color: '#c9c9cd',
+    fontSize: 14,
+    fontWeight: '600',
+    textAlign: 'center',
+  },
+  nameFocused: {
+    color: '#ffffff',
+  },
+  offlineBadge: {
+    position: 'absolute',
+    top: 6,
+    right: 6,
+    backgroundColor: '#e24848',
+    paddingVertical: 2,
+    paddingHorizontal: 6,
+    borderRadius: 4,
+  },
+  offlineText: {
+    color: '#ffffff',
+    fontSize: 9,
+    fontWeight: 'bold',
+  },
+  // Skeleton Layout
+  skeleton: {
+    borderStyle: 'dashed',
+    borderColor: '#3a3a40',
+    backgroundColor: '#161618',
+  },
+  skeletonLogo: {
+    width: 60,
+    height: 60,
+    borderRadius: 8,
+    backgroundColor: '#2a2a2e',
+    marginBottom: 8,
+  },
+  skeletonText: {
+    width: 80,
+    height: 12,
+    backgroundColor: '#2a2a2e',
+    borderRadius: 4,
+  },
+});

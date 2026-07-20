@@ -1,0 +1,18 @@
+[
+  {
+    "id": "abp-ananda",
+    "name": "ABP Ananda",
+    "language": "Bengali",
+    "country": "India",
+    "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/ABP_Ananda_logo.svg/320px-ABP_Ananda_logo.svg.png",
+    "youtubeChannelId": "UC1hk9t2lGZJ3bK3Z8B57yjw"
+  },
+  {
+    "id": "zee-24-ghanta",
+    "name": "Zee 24 Ghanta",
+    "language": "Bengali",
+    "country": "India",
+    "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/Zee_24_Ghanta_2025.svg/320px-Zee_24_Ghanta_2025.svg.png",
+    "youtubeChannelId": "UC79_T7p9k1R3x3fO-8x7a7Q"
+  }
+]

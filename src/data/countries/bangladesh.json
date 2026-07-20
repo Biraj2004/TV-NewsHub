@@ -1,0 +1,18 @@
+[
+  {
+    "id": "somoy-tv",
+    "name": "Somoy TV",
+    "language": "Bengali",
+    "country": "Bangladesh",
+    "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Somoy_TV_Logo.svg/320px-Somoy_TV_Logo.svg.png",
+    "youtubeChannelId": "UCh7YgC9-4P7-0yJzP9C5bXw"
+  },
+  {
+    "id": "jamuna-tv",
+    "name": "Jamuna TV",
+    "language": "Bengali",
+    "country": "Bangladesh",
+    "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/be/Jamuna_TV_logo.svg/320px-Jamuna_TV_logo.svg.png",
+    "youtubeChannelId": "UCqT3L3_Vb3G48y_6l4x6V1Q"
+  }
+]
