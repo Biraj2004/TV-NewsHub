@@ -52,25 +52,36 @@ NewsHub uses the **Repository Pattern** to separate the user interface from the 
 
 ```mermaid
 graph TD
-    subgraph Data Layer
+    subgraph "Data Layer"
         A[india.json] --> C[channels.ts Repository Loader]
         B[bangladesh.json] --> C
     end
 
-    subgraph Logic & Hooks
+    subgraph "Logic & Hooks"
         C --> D[useLiveChannelResolver]
         C --> G[HomeScreen State]
-        E[AsyncStorage] --> F[storage.ts Utility]
-        F --> G
-        G --> F
+        G <--> F[storage.ts Utility]
+        F <--> E[(AsyncStorage)]
     end
 
-    subgraph UI & Navigation
-        G -->|Play Stream| H[PlayerScreen]
-        D -->|Resolves Video ID via YouTube RSS| H
-        H -->|D-pad Switch| D
-        H -->|Back Focus| G
+    subgraph "UI & Navigation"
+        H[PlayerScreen]
     end
+
+    G -->|Play Stream| H
+    D -->|Resolve Video ID via YouTube RSS| H
+    H -.->|D-pad Switch| D
+    H -.->|Back Focus| G
+
+    classDef dataLayer fill:#1e3a5f,stroke:#4d9de0,stroke-width:1.5px,color:#e8f1fb
+    classDef logicLayer fill:#3d2a5c,stroke:#a685e2,stroke-width:1.5px,color:#f1eaff
+    classDef storageLayer fill:#4a3a1e,stroke:#e0b34d,stroke-width:1.5px,color:#fdf3de
+    classDef uiLayer fill:#1e4a3a,stroke:#4de0a3,stroke-width:1.5px,color:#e3fdf3
+
+    class A,B,C dataLayer
+    class D,G logicLayer
+    class E,F storageLayer
+    class H uiLayer
 ```
 
 ---
