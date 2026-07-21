@@ -1,4 +1,4 @@
-# <p align="center">📺 TV-NewsHub</p>
+# TV-NewsHub
 
 <p align="center">
   <img src="public/antenna-icon.svg" width="120" height="120" alt="NewsHub TV Logo" />
@@ -25,28 +25,28 @@ This repository is **exclusively optimized for Android TV, Google TV, Fire TV, a
 
 ---
 
-## ✨ Features & TV OS UI Highlights
+## Features & TV OS UI Highlights
 
-*   **🔍 Optimized 10-Foot Focus & Zoom**:
+*   **Optimized 10-Foot Focus & Zoom**:
     Focusable items (channel cards, country pills, language tabs) scale up by `1.05x` and draw a bold white border on focus. Large type sizes and high-contrast layouts ensure readability from a distance of 10 feet.
-*   **🌐 Country & Language Filtering**:
-    Dynamically loads and groups channels based on country directories (e.g., India 🇮🇳, Bangladesh 🇧🇩) and provides language tabs (e.g., Bengali, All) corresponding to active channels.
-*   **⏰ Live Clock & Status Badges**:
+*   **Country & Language Filtering**:
+    Dynamically loads and groups channels based on country directories (e.g., India, Bangladesh) and provides language tabs (e.g., Bengali, All) corresponding to active channels.
+*   **Live Clock & Status Badges**:
     Features an active digital clock on the home dashboard. Displays clean "OFFLINE" badges on tiles if live streams fail to resolve or go offline.
-*   **🕒 Last-Watched Auto-Resume**:
+*   **Last-Watched Auto-Resume**:
     Persists your last-viewed channel and timestamp via AsyncStorage. If you reopen the app within **10 minutes**, it bypasses the dashboard and opens the live stream immediately.
-*   **🍿 Immersive Player Overlay**:
+*   **Immersive Player Overlay**:
     Smoothly fades out stream controls and channel details after **4 seconds** of inactivity (`300ms` fade-out) for distraction-free viewing. Pressing any remote D-pad key instantly fades the overlay back in (`200ms` fade-in) and resets the timer.
-*   **🔄 D-Pad Channel Hopping**:
+*   **D-Pad Channel Hopping**:
     While in full-screen playback, press **Left/Right D-pad keys** to hop between adjacent channels within the active filter list instantly, without exiting to the dashboard.
-*   **↩️ Back Button Focus Target**:
+*   **Back Button Focus Target**:
     Exiting the player returns the user to the home screen grid with focus landed directly on the tile of the channel they were just watching.
-*   **🍪 Cookie-Consent Auto-Dismiss**:
-    Automatically accepts YouTube's cookie-consent dialog inside the embedded WebView before video playback begins, ensuring elderly users never encounter a blocking consent screen.
+*   **Cookie-Consent Auto-Dismiss**:
+    Automatically accepts YouTube's cookie-consent dialog inside the embedded WebView before video playback begins, ensuring users never encounter a blocking consent screen.
 
 ---
 
-## 🏗 Architecture & Data Flow
+## Architecture & Data Flow
 
 NewsHub uses the **Repository Pattern** to separate the user interface from the data layer. This makes it easy to swap out the local JSON configurations for a remote database (like Firebase Firestore or Remote Config) in the future without changing any component logic.
 
@@ -86,7 +86,7 @@ graph TD
 
 ---
 
-## 🛠 Tech Stack
+## Tech Stack
 
 *   **Framework**: [react-native-tvos](https://github.com/react-native-tvos/react-native-tvos) (TV-specific fork of React Native)
 *   **Navigation**: `@react-navigation/native` with `@react-navigation/native-stack`
@@ -97,32 +97,32 @@ graph TD
 
 ---
 
-## 📂 Project Structure
+## Project Structure
 
 ```text
 TV-NewsHub/
-├── android/               # Native Android TV build configurations & resources
-├── APK_Export/            # Pre-built release APKs (arm64, armeabi-v7a, universal)
-├── docs/                  # Technical documentation
-│     ├── Build.md         # Setup, compiler guidelines, & run commands
-│     ├── Architecture.md  # Repository patterns, hooks, and D-pad lifecycle
-│     └── Design.md        # Typography scale, focus indicators, & animation tokens
-├── public/                # Branding assets (TV banner, antenna-icon.svg)
-├── src/                   # Application source files
-│     ├── components/      # D-pad focusable components (ChannelTile, Pills, Overlays)
-│     ├── data/            # Repository pattern loaders
-│     │     ├── countries/ # Country-based channel lists (india.json, bangladesh.json)
-│     │     └── channels.ts# Static registry and dynamic export mapper
-│     ├── hooks/           # useLiveChannelResolver and useIdleTimer hooks
-│     ├── navigation/      # Stack navigation configuration
-│     ├── screens/         # HomeScreen (grid dashboard) & PlayerScreen (inline video)
-│     └── utils/           # AsyncStorage persistence layer
-└── __tests__/             # Unit tests (App.test.tsx)
+├── android/                   # Native Android TV build configurations & resources
+├── APK_Export/                # Pre-built release APKs (arm64, armeabi-v7a, universal)
+├── docs/                      # Technical documentation
+│     ├── Build.md             # Setup, compiler guidelines, & run commands
+│     ├── Architecture.md      # Repository patterns, hooks, and D-pad lifecycle
+│     └── Design.md            # Typography scale, focus indicators, & animation tokens
+├── public/                    # Branding assets (TV banner, antenna-icon.svg)
+├── src/                       # Application source files
+│     ├── components/          # D-pad focusable components (ChannelTile, Pills, Overlays)
+│     ├── data/                # Repository pattern loaders
+│     │     ├── countries/     # Country-based channel lists (india.json, bangladesh.json)
+│     │     └── channels.ts    # Static registry and dynamic export mapper
+│     ├── hooks/               # useLiveChannelResolver and useIdleTimer hooks
+│     ├── navigation/          # Stack navigation configuration
+│     ├── screens/             # HomeScreen (grid dashboard) & PlayerScreen (inline video)
+│     └── utils/               # AsyncStorage persistence layer
+└── __tests__/                 # Unit tests (App.test.tsx)
 ```
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ### 1. Prerequisites
 Ensure you have the Android SDK configured on your machine. Set up an Android TV or Google TV Emulator profile and verify it is running:
@@ -150,7 +150,7 @@ npm run android
 
 ---
 
-## 🧪 Running Unit Tests
+## Running Unit Tests
 
 We use Jest for unit testing. Mocks for React Navigation, AsyncStorage, WebView, and the native video player are pre-configured inside `jest.setup.js`.
 
@@ -161,7 +161,7 @@ npm test
 
 ---
 
-## 📦 Building Production APKs
+## Building Production APKs
 
 Compile all release APK variants (arm64-v8a, armeabi-v7a, x86, x86_64, universal):
 
@@ -178,18 +178,18 @@ cd android
 Compiled APKs are located at:
 ```
 android/app/build/outputs/apk/release/
-  ├── app-arm64-v8a-release.apk    # Modern physical Android TV devices
-  ├── app-armeabi-v7a-release.apk  # Older physical Android TV devices
-  ├── app-x86-release.apk          # x86 emulators
-  ├── app-x86_64-release.apk       # x86_64 emulators
-  └── app-universal-release.apk    # All architectures (use for emulators)
+  app-arm64-v8a-release.apk    — Modern physical Android TV devices
+  app-armeabi-v7a-release.apk  — Older physical Android TV devices
+  app-x86-release.apk          — x86 emulators
+  app-x86_64-release.apk       — x86_64 emulators
+  app-universal-release.apk    — All architectures (use for emulators)
 ```
 
 Pre-built APKs for each release are also available in the [`APK_Export/`](./APK_Export/) folder.
 
 ---
 
-## 📲 Installing the APK on an Emulator
+## Installing the APK on an Emulator
 
 ### Emulator Used During Development
 
@@ -229,7 +229,6 @@ adb -s emulator-5554 shell monkey -p com.tempnewshub 1
 # First find your device serial
 adb devices
 
-# Then install the appropriate APK
 # Modern TV (2018 or newer):
 adb -s <your-device-serial> install -r APK_Export/TVNewsHub-v0.0.2-arm64-v8a.apk
 
@@ -244,7 +243,7 @@ adb -s emulator-5554 uninstall com.tempnewshub
 
 ---
 
-## 📋 Release History
+## Release History
 
 | Version | Changes |
 |---------|---------|
@@ -253,5 +252,5 @@ adb -s emulator-5554 uninstall com.tempnewshub
 
 ---
 
-## 📄 License
+## License
 This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
