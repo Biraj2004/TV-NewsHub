@@ -95,3 +95,10 @@ jest.mock('./src/hooks/useLiveChannelResolver', () => ({
 // Mock @react-native-community/netinfo
 import mockRNCNetInfo from '@react-native-community/netinfo/jest/netinfo-mock.js';
 jest.mock('@react-native-community/netinfo', () => mockRNCNetInfo);
+
+// Mock @react-native-cookies/cookies
+jest.mock('@react-native-cookies/cookies', () => ({
+  set: jest.fn(() => Promise.resolve(true)),
+  get: jest.fn(() => Promise.resolve({})),
+  clearAll: jest.fn(() => Promise.resolve(true)),
+}));

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, StyleSheet, Dimensions, BackHandler, Pressable, ActivityIndicator } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import YoutubePlayer from 'react-native-youtube-iframe';
+import { ConsentSafeYouTubePlayer } from '../components/ConsentSafeYouTubePlayer';
 import { RootStackParamList } from '../navigation/AppNavigator';
 import { PlayerOverlay } from '../components/PlayerOverlay';
 import { useIdleTimer } from '../hooks/useIdleTimer';
@@ -103,7 +103,7 @@ export function PlayerScreen({ route, navigation }: Props) {
       {/* YouTube Player */}
       <View style={styles.playerWrapper}>
         {videoId && !hasError ? (
-          <YoutubePlayer
+          <ConsentSafeYouTubePlayer
             height={height}
             width={width}
             play={isPlaying}
@@ -116,8 +116,8 @@ export function PlayerScreen({ route, navigation }: Props) {
               controls: false, // Hide default player chrome controls
               cc_load_policy: 0,
               modestbranding: 1,
-              rel: 0,
-            }}
+              rel: false,
+            } as any}
           />
         ) : (
           <View style={styles.loadingWrapper}>
