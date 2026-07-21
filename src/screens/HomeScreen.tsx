@@ -7,6 +7,11 @@ import { LanguageTabs } from '../components/LanguageTabs';
 import { ChannelTile, Channel } from '../components/ChannelTile';
 import { getLastWatchedChannel, setLastWatchedChannel } from '../utils/storage';
 import channelsData from '../data/channels';
+import { BrandLogo } from '../components/BrandLogo';
+import { NoInternetScreen } from '../components/NoInternetScreen';
+import { EmptyState } from '../components/EmptyState';
+import { DegradedStatusBanner } from '../components/DegradedStatusBanner';
+import { useNetworkStatus } from '../hooks/useNetworkStatus';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Home'>;
 
@@ -63,6 +68,7 @@ interface ChannelRowProps {
   onChannelPress: (channel: Channel, videoId: string) => void;
   onTileFocus: (colIndex: number) => void;
   preferredFocusColIndex: number | null;
+  onLiveCheckError?: () => void;
 }
 
 const ChannelRow = React.memo(({
@@ -70,6 +76,7 @@ const ChannelRow = React.memo(({
   onChannelPress,
   onTileFocus,
   preferredFocusColIndex,
+  onLiveCheckError,
 }: ChannelRowProps) => {
   const flatListRef = useRef<FlatList>(null);
   const scrollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -124,6 +131,7 @@ const ChannelRow = React.memo(({
               hasTVPreferredFocus={hasPreferredFocus}
               onPress={onChannelPress}
               onFocus={() => handleFocus(index)}
+              onLiveCheckError={onLiveCheckError}
             />
           );
         }}
@@ -134,6 +142,8 @@ const ChannelRow = React.memo(({
 });
 
 export function HomeScreen({ navigation, route }: Props) {
+  const isConnected = useNetworkStatus();
+  const [isLiveCheckDegraded, setIsLiveCheckDegraded] = useState<boolean>(false);
   const [timeStr, setTimeStr] = useState<string>('');
   const [lastWatchedName, setLastWatchedName] = useState<string>('None');
   const [checkedAutoLaunch, setCheckedAutoLaunch] = useState<boolean>(false);
@@ -307,6 +317,14 @@ export function HomeScreen({ navigation, route }: Props) {
     };
   }, []);
 
+  const hasChannels = useMemo(() => {
+    return channelsByCountry.some((c) => selectedLanguage === 'All' || c.language === selectedLanguage);
+  }, [channelsByCountry, selectedLanguage]);
+
+  if (isConnected === false) {
+    return <NoInternetScreen />;
+  }
+
   if (!checkedAutoLaunch) {
     return (
       <View style={styles.loadingContainer}>
@@ -324,12 +342,18 @@ export function HomeScreen({ navigation, route }: Props) {
       >
         {/* Header Bar */}
         <View style={styles.header}>
-          <Text style={styles.brandTitle}>📺 NewsHub</Text>
+          <View style={styles.brandContainer}>
+            <BrandLogo size={24} />
+            <Text style={styles.brandTitle}>NewsHub</Text>
+          </View>
           <View style={styles.headerRight}>
             <Text style={styles.lastWatched}>Last Watched: {lastWatchedName}</Text>
             <Text style={styles.clock}>{timeStr}</Text>
           </View>
         </View>
+
+        {/* Degraded Status Banner */}
+        {isLiveCheckDegraded && <DegradedStatusBanner />}
 
         {/* Country Row */}
         <View style={styles.tabsWrapper}>
@@ -354,27 +378,32 @@ export function HomeScreen({ navigation, route }: Props) {
           />
         </View>
 
-        {/* Channels Rows */}
-        {activeLanguages.map((lang, rowIndex) => {
-          const channelsInRow = channelsByCountry.filter((c) => c.language === lang);
-          if (channelsInRow.length === 0) return null;
+        {/* Channels Rows or Empty State */}
+        {hasChannels ? (
+          activeLanguages.map((lang, rowIndex) => {
+            const channelsInRow = channelsByCountry.filter((c) => c.language === lang);
+            if (channelsInRow.length === 0) return null;
 
-          const preferredFocusColIndex =
-            preferredFocusInfo.rowIndex === rowIndex ? preferredFocusInfo.colIndex : null;
+            const preferredFocusColIndex =
+              preferredFocusInfo.rowIndex === rowIndex ? preferredFocusInfo.colIndex : null;
 
-          return (
-            <View key={lang} style={styles.rowContainer}>
-              <Text style={styles.rowTitle}>{lang}</Text>
-              <ChannelRow
-                channels={channelsInRow}
-                rowIndex={rowIndex}
-                onChannelPress={handleChannelPress}
-                onTileFocus={(colIndex) => handleTileFocus(rowIndex, colIndex)}
-                preferredFocusColIndex={preferredFocusColIndex}
-              />
-            </View>
-          );
-        })}
+            return (
+              <View key={lang} style={styles.rowContainer}>
+                <Text style={styles.rowTitle}>{lang}</Text>
+                <ChannelRow
+                  channels={channelsInRow}
+                  rowIndex={rowIndex}
+                  onChannelPress={handleChannelPress}
+                  onTileFocus={(colIndex) => handleTileFocus(rowIndex, colIndex)}
+                  preferredFocusColIndex={preferredFocusColIndex}
+                  onLiveCheckError={() => setIsLiveCheckDegraded(true)}
+                />
+              </View>
+            );
+          })
+        ) : (
+          <EmptyState language={selectedLanguage} country={selectedCountry} />
+        )}
       </ScrollView>
 
       <Text style={styles.footerHelp}>
@@ -406,10 +435,15 @@ const styles = StyleSheet.create({
     marginBottom: 24,
     paddingHorizontal: 32,
   },
+  brandContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   brandTitle: {
     color: '#ffffff',
     fontSize: 26,
     fontWeight: 'bold',
+    marginLeft: 10,
   },
   headerRight: {
     flexDirection: 'row',

@@ -143,6 +143,7 @@ export function PlayerScreen({ route, navigation }: Props) {
       {/* Controls Overlay */}
       <PlayerOverlay
         isVisible={isVisible && !hasError}
+        channelId={currentChannel.id}
         channelName={currentChannel.name}
         channelLogo={currentChannel.logo}
         language={currentChannel.language}

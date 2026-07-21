@@ -1,8 +1,11 @@
 import React, { useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, Animated, Image, Pressable } from 'react-native';
+import { localLogos } from '../utils/logoHelper';
+import { StatusBadge } from './StatusBadge';
 
 interface PlayerOverlayProps {
   isVisible: boolean;
+  channelId: string;
   channelName: string;
   channelLogo: string;
   language: string;
@@ -15,6 +18,7 @@ interface PlayerOverlayProps {
 
 export function PlayerOverlay({
   isVisible,
+  channelId,
   channelName,
   channelLogo,
   language,
@@ -34,6 +38,8 @@ export function PlayerOverlay({
     }).start();
   }, [isVisible, opacityAnim]);
 
+  const localLogoSource = localLogos[channelId];
+
   return (
     <Animated.View
       style={[styles.container, { opacity: opacityAnim }]}
@@ -42,7 +48,9 @@ export function PlayerOverlay({
       {/* Top Bar Overlay */}
       <View style={styles.topBar}>
         <View style={styles.channelInfo}>
-          {channelLogo ? (
+          {localLogoSource ? (
+            <Image source={localLogoSource} style={styles.logo} resizeMode="contain" />
+          ) : channelLogo ? (
             <Image source={{ uri: channelLogo }} style={styles.logo} resizeMode="contain" />
           ) : (
             <View style={styles.logoPlaceholder}>
@@ -50,10 +58,7 @@ export function PlayerOverlay({
             </View>
           )}
           <Text style={styles.channelName}>{channelName}</Text>
-          <View style={styles.liveBadge}>
-            <View style={styles.liveDot} />
-            <Text style={styles.liveText}>LIVE</Text>
-          </View>
+          <StatusBadge type="live" inline />
         </View>
         <Text style={styles.languageText}>{language}</Text>
       </View>
@@ -144,27 +149,6 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: 'bold',
     marginRight: 14,
-  },
-  liveBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(226, 72, 72, 0.2)',
-    paddingVertical: 3,
-    paddingHorizontal: 8,
-    borderRadius: 4,
-  },
-  liveDot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: '#e24848',
-    marginRight: 6,
-  },
-  liveText: {
-    color: '#f09595',
-    fontSize: 11,
-    fontWeight: 'bold',
-    letterSpacing: 0.5,
   },
   languageText: {
     color: '#8a8a8f',

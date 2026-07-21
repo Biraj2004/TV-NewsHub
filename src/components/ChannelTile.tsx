@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, Image, Pressable } from 'react-native';
 import { useLiveChannelResolver } from '../hooks/useLiveChannelResolver';
 import { localLogos } from '../utils/logoHelper';
+import { StatusBadge, BadgeType } from './StatusBadge';
 
 export interface Channel {
   id: string;
@@ -19,6 +20,7 @@ interface ChannelTileProps {
   onFocus?: () => void;
   width?: number;
   height?: number;
+  onLiveCheckError?: () => void;
 }
 
 export function ChannelTile({
@@ -28,8 +30,15 @@ export function ChannelTile({
   onFocus,
   width,
   height,
+  onLiveCheckError,
 }: ChannelTileProps) {
   const { videoId, isLoading, isError } = useLiveChannelResolver(channel.youtubeChannelId);
+
+  React.useEffect(() => {
+    if (isError && onLiveCheckError) {
+      onLiveCheckError();
+    }
+  }, [isError, onLiveCheckError]);
 
   if (isLoading) {
     // Skeleton placeholder card during load
@@ -37,20 +46,28 @@ export function ChannelTile({
       <View style={[styles.tile, width !== undefined && { width, flex: 0 }, height !== undefined && { height }, styles.skeleton]}>
         <View style={styles.skeletonLogo} />
         <View style={styles.skeletonText} />
+        <StatusBadge type="checking" />
       </View>
     );
   }
 
-  const isOffline = isError || !videoId;
+  const isOffline = !isLoading && !isError && !videoId;
   const localLogoSource = localLogos[channel.id];
+
+  let badgeType: BadgeType | undefined = undefined;
+  if (isLoading) {
+    badgeType = 'checking';
+  } else if (!isError) {
+    badgeType = videoId ? 'live' : 'offline';
+  }
 
   return (
     <Pressable
       hasTVPreferredFocus={hasTVPreferredFocus}
       onFocus={onFocus}
       onPress={() => {
-        if (!isOffline && videoId) {
-          onPress(channel, videoId);
+        if (!isOffline) {
+          onPress(channel, videoId || '');
         }
       }}
       style={({ focused }) => [
@@ -78,11 +95,7 @@ export function ChannelTile({
           )}
           <Text style={[styles.name, focused && styles.nameFocused]}>{channel.name}</Text>
           
-          {isOffline && (
-            <View style={styles.offlineBadge}>
-              <Text style={styles.offlineText}>OFFLINE</Text>
-            </View>
-          )}
+          {badgeType && <StatusBadge type={badgeType} />}
         </View>
       )}
     </Pressable>
@@ -153,20 +166,6 @@ const styles = StyleSheet.create({
   },
   nameFocused: {
     color: '#ffffff',
-  },
-  offlineBadge: {
-    position: 'absolute',
-    top: 6,
-    right: 6,
-    backgroundColor: '#e24848',
-    paddingVertical: 2,
-    paddingHorizontal: 6,
-    borderRadius: 4,
-  },
-  offlineText: {
-    color: '#ffffff',
-    fontSize: 9,
-    fontWeight: 'bold',
   },
   // Skeleton Layout
   skeleton: {
