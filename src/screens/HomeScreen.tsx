@@ -417,7 +417,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#0b0b0d',
-    paddingVertical: 32,
+    paddingTop: 16,
+    paddingBottom: 8,
   },
   loadingContainer: {
     flex: 1,
@@ -426,13 +427,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   scrollContent: {
-    paddingBottom: 40,
+    paddingBottom: 8,
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 24,
+    marginBottom: 12,
     paddingHorizontal: 32,
   },
   brandContainer: {
@@ -441,7 +442,7 @@ const styles = StyleSheet.create({
   },
   brandTitle: {
     color: '#ffffff',
-    fontSize: 26,
+    fontSize: 22,
     fontWeight: 'bold',
     marginLeft: 10,
   },
@@ -451,25 +452,25 @@ const styles = StyleSheet.create({
   },
   lastWatched: {
     color: '#8a8a8f',
-    fontSize: 14,
-    marginRight: 20,
+    fontSize: 13,
+    marginRight: 16,
   },
   clock: {
     color: '#ffffff',
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: '600',
   },
   tabsWrapper: {
     paddingHorizontal: 24,
   },
   rowContainer: {
-    marginBottom: 24,
+    marginBottom: 10,
   },
   rowTitle: {
     color: '#ffffff',
-    fontSize: 18,
+    fontSize: 15,
     fontWeight: 'bold',
-    marginBottom: 8,
+    marginBottom: 4,
     paddingHorizontal: 32,
   },
   rowWrapper: {
@@ -482,13 +483,13 @@ const styles = StyleSheet.create({
   rowContent: {
     paddingLeft: 32,
     paddingRight: 40,
-    paddingVertical: 12,
+    paddingVertical: 4,
   },
   footerHelp: {
     color: '#6b6b70',
-    fontSize: 12,
+    fontSize: 11,
     textAlign: 'center',
-    marginTop: 16,
+    marginTop: 4,
     paddingHorizontal: 32,
   },
 });

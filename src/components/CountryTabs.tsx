@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 16,
+    marginBottom: 8,
     paddingHorizontal: 8,
   },
   label: {
@@ -66,8 +66,8 @@ const styles = StyleSheet.create({
   },
   pill: {
     backgroundColor: '#2a2a2e',
-    paddingVertical: 6,
-    paddingHorizontal: 16,
+    paddingVertical: 4,
+    paddingHorizontal: 14,
     borderRadius: 20,
     marginRight: 10,
     borderWidth: 2,

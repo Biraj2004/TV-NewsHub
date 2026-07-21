@@ -1,46 +1,45 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { useTVEventHandler } from 'react-native';
 
 export function useIdleTimer(timeoutMs: number = 4000) {
   const [isVisible, setIsVisible] = useState<boolean>(true);
   const timerRef = useRef<any>(null);
 
-  const resetTimer = useCallback(() => {
-    // Clear any existing timer
+  const startHideTimer = useCallback(() => {
     if (timerRef.current) {
       clearTimeout(timerRef.current);
     }
-
-    // Show the overlay
-    setIsVisible(true);
-
-    // Set a new timer to hide the overlay
     timerRef.current = setTimeout(() => {
       setIsVisible(false);
     }, timeoutMs);
   }, [timeoutMs]);
 
+  // Show overlay and start the auto-hide countdown
   const showOverlay = useCallback(() => {
-    resetTimer();
-  }, [resetTimer]);
-
-  // Use the built-in React Native hook to listen to TV remote event triggers
-  useTVEventHandler((event) => {
-    if (event) {
-      resetTimer();
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
     }
-  });
+    setIsVisible(true);
+    startHideTimer();
+  }, [startHideTimer]);
+
+  // Hide overlay immediately (e.g. after channel switch)
+  const hideOverlay = useCallback(() => {
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+    }
+    setIsVisible(false);
+  }, []);
 
   useEffect(() => {
-    // Reset timer on mount
-    resetTimer();
+    // Show briefly on mount, then auto-hide
+    showOverlay();
 
     return () => {
       if (timerRef.current) {
         clearTimeout(timerRef.current);
       }
     };
-  }, [resetTimer]);
+  }, [showOverlay]);
 
-  return { isVisible, showOverlay, resetTimer };
+  return { isVisible, showOverlay, hideOverlay };
 }

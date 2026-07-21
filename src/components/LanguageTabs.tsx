@@ -47,13 +47,13 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 24,
+    marginBottom: 10,
     paddingHorizontal: 8,
   },
   pill: {
     backgroundColor: '#2a2a2e',
-    paddingVertical: 6,
-    paddingHorizontal: 16,
+    paddingVertical: 4,
+    paddingHorizontal: 14,
     borderRadius: 20,
     marginRight: 10,
     borderWidth: 2,

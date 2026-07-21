@@ -25,8 +25,8 @@ export function PlayerScreen({ route, navigation }: Props) {
   const [isPlaying, setIsPlaying] = useState<boolean>(true);
   const [playbackError, setPlaybackError] = useState<string | null>(null);
 
-  // Overlay Timer Hook (4 seconds inactivity timeout)
-  const { isVisible, showOverlay } = useIdleTimer(4000);
+  // Overlay Timer Hook — auto-hide after 4 seconds of no select/center press
+  const { isVisible, showOverlay, hideOverlay } = useIdleTimer(4000);
 
   // Reset state when channel index changes
   useEffect(() => {
@@ -34,44 +34,46 @@ export function PlayerScreen({ route, navigation }: Props) {
     setIsPlaying(true);
     // Persist as last watched
     setLastWatchedChannel(currentChannel.id);
-  }, [currentIndex, currentChannel]);
+    // Hide overlay immediately when switching channels so timer starts fresh
+    hideOverlay();
+  }, [currentIndex, currentChannel, hideOverlay]);
 
   // Navigate to previous channel
   const handlePrevChannel = useCallback(() => {
     setCurrentIndex((prev) => (prev - 1 + filteredChannels.length) % filteredChannels.length);
-    showOverlay();
-  }, [filteredChannels, showOverlay]);
+  }, [filteredChannels]);
 
   // Navigate to next channel
   const handleNextChannel = useCallback(() => {
     setCurrentIndex((prev) => (prev + 1) % filteredChannels.length);
-    showOverlay();
-  }, [filteredChannels, showOverlay]);
+  }, [filteredChannels]);
+
+  // Back navigation helper
+  const handleBack = useCallback(() => {
+    navigation.navigate('Home', { focusChannelId: currentChannel.id });
+  }, [navigation, currentChannel]);
 
   // Handle hardware back button pressed
   useEffect(() => {
-    const backAction = () => {
-      navigation.navigate('Home', { focusChannelId: currentChannel.id });
+    const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
+      handleBack();
       return true;
-    };
-
-    const backHandler = BackHandler.addEventListener('hardwareBackPress', backAction);
+    });
     return () => backHandler.remove();
-  }, [currentChannel, navigation]);
+  }, [handleBack]);
 
-  // TV Remote button events listener using hook
+  // TV Remote: only show overlay on select/center; navigate channels on left/right
   useTVEventHandler((event) => {
-    if (event) {
-      if (event.eventType === 'left' || event.eventType === 'dpadLeft') {
-        handlePrevChannel();
-      } else if (event.eventType === 'right' || event.eventType === 'dpadRight') {
-        handleNextChannel();
-      } else if (event.eventType === 'playPause') {
-        setIsPlaying((prev) => !prev);
-        showOverlay();
-      } else if (event.eventType === 'select' || event.eventType === 'dpadCenter') {
-        showOverlay();
-      }
+    if (!event) return;
+    if (event.eventType === 'left' || event.eventType === 'dpadLeft') {
+      handlePrevChannel();
+    } else if (event.eventType === 'right' || event.eventType === 'dpadRight') {
+      handleNextChannel();
+    } else if (event.eventType === 'playPause') {
+      setIsPlaying((prev) => !prev);
+      showOverlay();
+    } else if (event.eventType === 'select' || event.eventType === 'dpadCenter') {
+      showOverlay();
     }
   });
 
@@ -140,7 +142,7 @@ export function PlayerScreen({ route, navigation }: Props) {
         style={styles.focusGrabber}
       />
 
-      {/* Controls Overlay */}
+      {/* Controls Overlay — zIndex 2 so it sits above the focusGrabber (zIndex 1) */}
       <PlayerOverlay
         isVisible={isVisible && !hasError}
         channelId={currentChannel.id}
@@ -151,7 +153,7 @@ export function PlayerScreen({ route, navigation }: Props) {
         onTogglePlay={() => setIsPlaying((p) => !p)}
         onNextChannel={handleNextChannel}
         onPrevChannel={handlePrevChannel}
-        onBack={() => navigation.navigate('Home', { focusChannelId: currentChannel.id })}
+        onBack={handleBack}
       />
 
       {/* Fallback Overlay for Offline/Errors */}
