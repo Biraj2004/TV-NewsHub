@@ -5,9 +5,10 @@ interface LanguageTabsProps {
   languages: string[];
   selectedLanguage: string;
   onSelectLanguage: (language: string) => void;
+  onFocus?: () => void;
 }
 
-export function LanguageTabs({ languages, selectedLanguage, onSelectLanguage }: LanguageTabsProps) {
+export function LanguageTabs({ languages, selectedLanguage, onSelectLanguage, onFocus }: LanguageTabsProps) {
   return (
     <View style={styles.container}>
       {languages.map((language) => {
@@ -16,6 +17,7 @@ export function LanguageTabs({ languages, selectedLanguage, onSelectLanguage }: 
         return (
           <Pressable
             key={language}
+            onFocus={onFocus}
             onPress={() => onSelectLanguage(language)}
             style={({ focused }) => [
               styles.pill,

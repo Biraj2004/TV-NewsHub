@@ -15,15 +15,25 @@ interface ChannelTileProps {
   channel: Channel;
   onPress: (channel: Channel, videoId: string) => void;
   hasTVPreferredFocus?: boolean;
+  onFocus?: () => void;
+  width?: number;
+  height?: number;
 }
 
-export function ChannelTile({ channel, onPress, hasTVPreferredFocus }: ChannelTileProps) {
+export function ChannelTile({
+  channel,
+  onPress,
+  hasTVPreferredFocus,
+  onFocus,
+  width,
+  height,
+}: ChannelTileProps) {
   const { videoId, isLoading, isError } = useLiveChannelResolver(channel.youtubeChannelId);
 
   if (isLoading) {
     // Skeleton placeholder card during load
     return (
-      <View style={[styles.tile, styles.skeleton]}>
+      <View style={[styles.tile, width !== undefined && { width, flex: 0 }, height !== undefined && { height }, styles.skeleton]}>
         <View style={styles.skeletonLogo} />
         <View style={styles.skeletonText} />
       </View>
@@ -35,6 +45,7 @@ export function ChannelTile({ channel, onPress, hasTVPreferredFocus }: ChannelTi
   return (
     <Pressable
       hasTVPreferredFocus={hasTVPreferredFocus}
+      onFocus={onFocus}
       onPress={() => {
         if (!isOffline && videoId) {
           onPress(channel, videoId);
@@ -42,6 +53,8 @@ export function ChannelTile({ channel, onPress, hasTVPreferredFocus }: ChannelTi
       }}
       style={({ focused }) => [
         styles.tile,
+        width !== undefined && { width, flex: 0 },
+        height !== undefined && { height },
         focused && styles.tileFocused,
         isOffline && styles.tileOffline,
       ]}

@@ -94,7 +94,7 @@ export function PlayerScreen({ route, navigation }: Props) {
     }
   };
 
-  const onPlayerError = (error: any) => {
+  const onPlayerError = (_error: any) => {
     setPlaybackError('Playback error or channel offline.');
   };
 

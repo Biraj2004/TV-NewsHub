@@ -5,9 +5,10 @@ interface CountryTabsProps {
   countries: string[];
   selectedCountry: string;
   onSelectCountry: (country: string) => void;
+  onFocus?: () => void;
 }
 
-export function CountryTabs({ countries, selectedCountry, onSelectCountry }: CountryTabsProps) {
+export function CountryTabs({ countries, selectedCountry, onSelectCountry, onFocus }: CountryTabsProps) {
   return (
     <View style={styles.container}>
       <Text style={styles.label}>Country</Text>
@@ -22,6 +23,7 @@ export function CountryTabs({ countries, selectedCountry, onSelectCountry }: Cou
           <Pressable
             key={country}
             hasTVPreferredFocus={index === 0}
+            onFocus={onFocus}
             onPress={() => onSelectCountry(country)}
             style={({ focused }) => [
               styles.pill,

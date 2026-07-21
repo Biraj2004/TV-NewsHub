@@ -14,5 +14,61 @@
     "country": "India",
     "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/Zee_24_Ghanta_2025.svg/320px-Zee_24_Ghanta_2025.svg.png",
     "youtubeChannelId": "UC79_T7p9k1R3x3fO-8x7a7Q"
+  },
+  {
+    "id": "ndtv-india",
+    "name": "NDTV India",
+    "language": "Hindi",
+    "country": "India",
+    "logo": "https://upload.wikimedia.org/wikipedia/commons/3/3f/NDTV_India.png",
+    "youtubeChannelId": "UC6hH7b_Rz2i5hZ2s6-Qh8OA"
+  },
+  {
+    "id": "aaj-tak",
+    "name": "Aaj Tak",
+    "language": "Hindi",
+    "country": "India",
+    "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/Aaj_Tak_Logo.svg/320px-Aaj_Tak_Logo.svg.png",
+    "youtubeChannelId": "UCBR8-60-KA26bO3O34H5-wQ"
+  },
+  {
+    "id": "abp-news",
+    "name": "ABP News",
+    "language": "Hindi",
+    "country": "India",
+    "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/ABP_News_Logo.svg/320px-ABP_News_Logo.svg.png",
+    "youtubeChannelId": "UCRWFSbif-RFENbBrSiez1DA"
+  },
+  {
+    "id": "zee-news",
+    "name": "Zee News",
+    "language": "Hindi",
+    "country": "India",
+    "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Zee_News_2023.png/320px-Zee_News_2023.png",
+    "youtubeChannelId": "UCxZn4prh544V-sL8_q-z9Eg"
+  },
+  {
+    "id": "india-tv",
+    "name": "India TV",
+    "language": "Hindi",
+    "country": "India",
+    "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/India_TV_logo.svg/320px-India_TV_logo.svg.png",
+    "youtubeChannelId": "UCttspZesZ8aR5P4_sXm7y3g"
+  },
+  {
+    "id": "india-today",
+    "name": "India Today",
+    "language": "English",
+    "country": "India",
+    "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/25/India_Today_logo.svg/320px-India_Today_logo.svg.png",
+    "youtubeChannelId": "UCYPvAwZP8pZhSMW8qs7cVCw"
+  },
+  {
+    "id": "puthiya-thalaimurai",
+    "name": "Puthiya Thalaimurai",
+    "language": "Tamil",
+    "country": "India",
+    "logo": "",
+    "youtubeChannelId": "UC49m4X_964S9y_u2mQG6-tA"
   }
 ]
