@@ -1,4 +1,4 @@
-# <p align="center">📺 NewsHub</p>
+# <p align="center">📺 TV-NewsHub</p>
 
 <p align="center">
   <img src="public/antenna-icon.svg" width="120" height="120" alt="NewsHub TV Logo" />
@@ -11,7 +11,7 @@
 <p align="center">
   <a href="https://reactnative.dev/"><img src="https://img.shields.io/badge/Framework-React%20Native%20TVOS%20v0.83-blue.svg?style=flat-square&logo=react" alt="React Native TVOS" /></a>
   <a href="https://www.typescriptlang.org/"><img src="https://img.shields.io/badge/Language-TypeScript-blue.svg?style=flat-square&logo=typescript" alt="TypeScript" /></a>
-  <a href="https://jestjs.io/"><img src="https://img.shields.io/badge/Tests-Jest%20Passed-brightgreen.svg?style=flat-square&logo=jest" alt="Jest Tests" /></a>
+  <img src="https://img.shields.io/badge/Version-0.0.2-brightgreen.svg?style=flat-square" alt="Version 0.0.2" />
   <a href="https://developer.android.com/tv"><img src="https://img.shields.io/badge/Platform-Android%20TV%20%7C%20Google%20TV%20%7C%20Fire%20TV-green.svg?style=flat-square&logo=android" alt="Target Platforms" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-Apache%202.0-orange.svg?style=flat-square" alt="License" /></a>
   <a href="SECURITY.md"><img src="https://img.shields.io/badge/Security-Policy%20Active-brightgreen.svg?style=flat-square" alt="Security Policy" /></a>
@@ -19,7 +19,7 @@
 
 ---
 
-NewsHub is a dedicated smart TV application designed from the ground up for remote-controlled interfaces. It aggregates live news streams by country and language, resolving active YouTube live stream IDs dynamically and playing them inline using an embedded player — ensuring users enjoy a seamless, full-screen viewing experience without ever leaving the application.
+NewsHub is a dedicated smart TV application designed from the ground up for remote-controlled interfaces. It aggregates live news streams by country and language, resolving active YouTube live stream IDs dynamically via YouTube's RSS feed API and playing them inline using an embedded player — ensuring users enjoy a seamless, full-screen viewing experience without ever leaving the application.
 
 This repository is **exclusively optimized for Android TV, Google TV, Fire TV, and other Android-based smart TVs**. All native iOS modules, configurations, and CocoaPods files have been completely stripped out to ensure a lean, lightweight, and focused codebase.
 
@@ -41,6 +41,8 @@ This repository is **exclusively optimized for Android TV, Google TV, Fire TV, a
     While in full-screen playback, press **Left/Right D-pad keys** to hop between adjacent channels within the active filter list instantly, without exiting to the dashboard.
 *   **↩️ Back Button Focus Target**:
     Exiting the player returns the user to the home screen grid with focus landed directly on the tile of the channel they were just watching.
+*   **🍪 Cookie-Consent Auto-Dismiss**:
+    Automatically accepts YouTube's cookie-consent dialog inside the embedded WebView before video playback begins, ensuring elderly users never encounter a blocking consent screen.
 
 ---
 
@@ -65,7 +67,7 @@ graph TD
 
     subgraph UI & Navigation
         G -->|Play Stream| H[PlayerScreen]
-        D -->|Resolves Video ID| H
+        D -->|Resolves Video ID via YouTube RSS| H
         H -->|D-pad Switch| D
         H -->|Back Focus| G
     end
@@ -78,7 +80,7 @@ graph TD
 *   **Framework**: [react-native-tvos](https://github.com/react-native-tvos/react-native-tvos) (TV-specific fork of React Native)
 *   **Navigation**: `@react-navigation/native` with `@react-navigation/native-stack`
 *   **Video Engine**: `react-native-youtube-iframe` (safely wraps YouTube IFrame Player API in `react-native-webview`)
-*   **Data Layer**: Custom static JSON repository loader
+*   **Data Layer**: Custom static JSON repository loader — channels verified via YouTube RSS API
 *   **Testing**: Jest + `react-test-renderer` with fully mocked native dependencies
 *   **Type System**: TypeScript
 
@@ -89,6 +91,7 @@ graph TD
 ```text
 TV-NewsHub/
 ├── android/               # Native Android TV build configurations & resources
+├── APK_Export/            # Pre-built release APKs (arm64, armeabi-v7a, universal)
 ├── docs/                  # Technical documentation
 │     ├── Build.md         # Setup, compiler guidelines, & run commands
 │     ├── Architecture.md  # Repository patterns, hooks, and D-pad lifecycle
@@ -149,13 +152,93 @@ npm test
 
 ## 📦 Building Production APKs
 
-Compile the optimized release APK using the Gradle wrapper:
+Compile all release APK variants (arm64-v8a, armeabi-v7a, x86, x86_64, universal):
+
 ```bash
+# Windows
+cd android
+gradlew.bat assembleRelease
+
+# macOS / Linux
 cd android
 ./gradlew assembleRelease
 ```
-The compiled release package will be located at:
-`android/app/build/outputs/apk/release/app-release.apk`
+
+Compiled APKs are located at:
+```
+android/app/build/outputs/apk/release/
+  ├── app-arm64-v8a-release.apk    # Modern physical Android TV devices
+  ├── app-armeabi-v7a-release.apk  # Older physical Android TV devices
+  ├── app-x86-release.apk          # x86 emulators
+  ├── app-x86_64-release.apk       # x86_64 emulators
+  └── app-universal-release.apk    # All architectures (use for emulators)
+```
+
+Pre-built APKs for each release are also available in the [`APK_Export/`](./APK_Export/) folder.
+
+---
+
+## 📲 Installing the APK on an Emulator
+
+### Emulator Used During Development
+
+| Property | Value |
+|----------|-------|
+| **AVD Name** | Android TV (1080p) |
+| **Device Type** | Android TV — 1080p |
+| **API Level** | API 35 (Android 15) |
+| **Architecture** | x86_64 (emulator) |
+| **ADB Serial** | `emulator-5554` |
+
+> **Note:** Android emulators run on `x86_64`. Use the **universal** APK for emulator installation.
+> ARM APKs (`arm64-v8a`, `armeabi-v7a`) will fail with `INSTALL_FAILED_NO_MATCHING_ABIS` on emulators.
+
+### Steps to Install
+
+**1. Verify the emulator is running:**
+```bash
+adb devices
+# Expected output:
+# List of devices attached
+# emulator-5554   device
+```
+
+**2. Install the universal APK on the emulator:**
+```bash
+adb -s emulator-5554 install -r APK_Export/TVNewsHub-v0.0.2-universal.apk
+```
+
+**3. Launch the app immediately after install:**
+```bash
+adb -s emulator-5554 shell monkey -p com.tempnewshub 1
+```
+
+**4. (Optional) Install on a physical Android TV device:**
+```bash
+# First find your device serial
+adb devices
+
+# Then install the appropriate APK
+# Modern TV (2018 or newer):
+adb -s <your-device-serial> install -r APK_Export/TVNewsHub-v0.0.2-arm64-v8a.apk
+
+# Older TV:
+adb -s <your-device-serial> install -r APK_Export/TVNewsHub-v0.0.2-armeabi-v7a.apk
+```
+
+**5. Uninstall if needed:**
+```bash
+adb -s emulator-5554 uninstall com.tempnewshub
+```
+
+---
+
+## 📋 Release History
+
+| Version | Changes |
+|---------|---------|
+| **0.0.2** | Fixed all 25 channel IDs (verified via YouTube RSS API). Rewrote live stream resolver using YouTube's UULV RSS feed. Fixed overlay zIndex for player controls. Auto-hide timer now works correctly. Cookie-consent auto-dismiss. |
+| **0.0.1** | Initial release. Core grid UI, player screen, country/language filtering, D-pad navigation. |
 
 ---
 
