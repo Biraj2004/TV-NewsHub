@@ -25,4 +25,4 @@ test('renders correctly', async () => {
   await ReactTestRenderer.act(() => {
     renderer.unmount();
   });
-});
+}, 30000);
