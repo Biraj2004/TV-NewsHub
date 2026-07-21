@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image, Pressable } from 'react-native';
 import { useLiveChannelResolver } from '../hooks/useLiveChannelResolver';
+import { localLogos } from '../utils/logoHelper';
 
 export interface Channel {
   id: string;
@@ -41,6 +42,7 @@ export function ChannelTile({
   }
 
   const isOffline = isError || !videoId;
+  const localLogoSource = localLogos[channel.id];
 
   return (
     <Pressable
@@ -61,8 +63,14 @@ export function ChannelTile({
     >
       {({ focused }) => (
         <View style={styles.contentContainer}>
-          {channel.logo ? (
-            <Image source={{ uri: channel.logo }} style={styles.logo} resizeMode="contain" />
+          {localLogoSource ? (
+            <View style={styles.logoContainer}>
+              <Image source={localLogoSource} style={styles.logo} resizeMode="contain" />
+            </View>
+          ) : channel.logo ? (
+            <View style={styles.logoContainer}>
+              <Image source={{ uri: channel.logo }} style={styles.logo} resizeMode="contain" />
+            </View>
           ) : (
             <View style={styles.logoPlaceholder}>
               <Text style={styles.logoPlaceholderText}>{channel.name[0]}</Text>
@@ -109,12 +117,19 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
   },
-  logo: {
+  logoContainer: {
     width: 60,
     height: 60,
     borderRadius: 8,
-    backgroundColor: '#0b0b0d',
+    backgroundColor: '#ffffff',
+    justifyContent: 'center',
+    alignItems: 'center',
     marginBottom: 8,
+    padding: 6,
+  },
+  logo: {
+    width: '100%',
+    height: '100%',
   },
   logoPlaceholder: {
     width: 60,

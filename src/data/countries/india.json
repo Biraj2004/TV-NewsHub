@@ -4,7 +4,7 @@
     "name": "ABP Ananda",
     "language": "Bengali",
     "country": "India",
-    "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/ABP_Ananda_logo.svg/320px-ABP_Ananda_logo.svg.png",
+    "logo": "",
     "youtubeChannelId": "UC1hk9t2lGZJ3bK3Z8B57yjw"
   },
   {
@@ -12,15 +12,39 @@
     "name": "Zee 24 Ghanta",
     "language": "Bengali",
     "country": "India",
-    "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/Zee_24_Ghanta_2025.svg/320px-Zee_24_Ghanta_2025.svg.png",
+    "logo": "",
     "youtubeChannelId": "UC79_T7p9k1R3x3fO-8x7a7Q"
+  },
+  {
+    "id": "news18-bangla",
+    "name": "News18 Bangla",
+    "language": "Bengali",
+    "country": "India",
+    "logo": "",
+    "youtubeChannelId": "UC-crZTQNRzZgzyighTKF0nQ"
+  },
+  {
+    "id": "republic-bangla",
+    "name": "Republic Bangla",
+    "language": "Bengali",
+    "country": "India",
+    "logo": "",
+    "youtubeChannelId": "UC4d99pS940o22qP2L270mPg"
+  },
+  {
+    "id": "tv9-bangla",
+    "name": "TV9 Bangla",
+    "language": "Bengali",
+    "country": "India",
+    "logo": "",
+    "youtubeChannelId": "UCHCR4UFsGwd_VcDa0-a4haw"
   },
   {
     "id": "ndtv-india",
     "name": "NDTV India",
     "language": "Hindi",
     "country": "India",
-    "logo": "https://upload.wikimedia.org/wikipedia/commons/3/3f/NDTV_India.png",
+    "logo": "",
     "youtubeChannelId": "UC6hH7b_Rz2i5hZ2s6-Qh8OA"
   },
   {
@@ -28,7 +52,7 @@
     "name": "Aaj Tak",
     "language": "Hindi",
     "country": "India",
-    "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/Aaj_Tak_Logo.svg/320px-Aaj_Tak_Logo.svg.png",
+    "logo": "",
     "youtubeChannelId": "UCBR8-60-KA26bO3O34H5-wQ"
   },
   {
@@ -36,7 +60,7 @@
     "name": "ABP News",
     "language": "Hindi",
     "country": "India",
-    "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/ABP_News_Logo.svg/320px-ABP_News_Logo.svg.png",
+    "logo": "",
     "youtubeChannelId": "UCRWFSbif-RFENbBrSiez1DA"
   },
   {
@@ -44,7 +68,7 @@
     "name": "Zee News",
     "language": "Hindi",
     "country": "India",
-    "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Zee_News_2023.png/320px-Zee_News_2023.png",
+    "logo": "",
     "youtubeChannelId": "UCxZn4prh544V-sL8_q-z9Eg"
   },
   {
@@ -52,7 +76,7 @@
     "name": "India TV",
     "language": "Hindi",
     "country": "India",
-    "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/India_TV_logo.svg/320px-India_TV_logo.svg.png",
+    "logo": "",
     "youtubeChannelId": "UCttspZesZ8aR5P4_sXm7y3g"
   },
   {
@@ -60,15 +84,39 @@
     "name": "India Today",
     "language": "English",
     "country": "India",
-    "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/25/India_Today_logo.svg/320px-India_Today_logo.svg.png",
+    "logo": "",
     "youtubeChannelId": "UCYPvAwZP8pZhSMW8qs7cVCw"
   },
   {
-    "id": "puthiya-thalaimurai",
-    "name": "Puthiya Thalaimurai",
-    "language": "Tamil",
+    "id": "wion",
+    "name": "WION",
+    "language": "English",
     "country": "India",
     "logo": "",
-    "youtubeChannelId": "UC49m4X_964S9y_u2mQG6-tA"
+    "youtubeChannelId": "UC7pwR9P7HnL6i_0S-q5o7AA"
+  },
+  {
+    "id": "ndtv-24x7",
+    "name": "NDTV 24x7",
+    "language": "English",
+    "country": "India",
+    "logo": "",
+    "youtubeChannelId": "UCY0nz51H1G2mK8N0R8L4G6A"
+  },
+  {
+    "id": "republic-world",
+    "name": "Republic TV",
+    "language": "English",
+    "country": "India",
+    "logo": "",
+    "youtubeChannelId": "UC-6czyMkxDi8E8akPl0c7_w"
+  },
+  {
+    "id": "times-now",
+    "name": "Times Now",
+    "language": "English",
+    "country": "India",
+    "logo": "",
+    "youtubeChannelId": "UC6RJ7-PaXg6TIH2BzZfTV7w"
   }
 ]

@@ -4,7 +4,7 @@
     "name": "Somoy TV",
     "language": "Bengali",
     "country": "Bangladesh",
-    "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Somoy_TV_Logo.svg/320px-Somoy_TV_Logo.svg.png",
+    "logo": "",
     "youtubeChannelId": "UCh7YgC9-4P7-0yJzP9C5bXw"
   },
   {
@@ -12,7 +12,71 @@
     "name": "Jamuna TV",
     "language": "Bengali",
     "country": "Bangladesh",
-    "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/be/Jamuna_TV_logo.svg/320px-Jamuna_TV_logo.svg.png",
+    "logo": "",
     "youtubeChannelId": "UCqT3L3_Vb3G48y_6l4x6V1Q"
+  },
+  {
+    "id": "channel-24",
+    "name": "Channel 24",
+    "language": "Bengali",
+    "country": "Bangladesh",
+    "logo": "",
+    "youtubeChannelId": "UCHLqIOMPk20w-6cFgkA90jw"
+  },
+  {
+    "id": "dbc-news",
+    "name": "DBC News",
+    "language": "Bengali",
+    "country": "Bangladesh",
+    "logo": "",
+    "youtubeChannelId": "UCUvXoiDEKI8VZJrr58g4VAw"
+  },
+  {
+    "id": "ekattor-tv",
+    "name": "Ekattor TV",
+    "language": "Bengali",
+    "country": "Bangladesh",
+    "logo": "",
+    "youtubeChannelId": "UC0ThmWmb7WQATrrDMLQph7Q"
+  },
+  {
+    "id": "al-jazeera-english",
+    "name": "Al Jazeera English",
+    "language": "English",
+    "country": "Bangladesh",
+    "logo": "",
+    "youtubeChannelId": "UCNye-wNBqNL5ZzHSJj3l8bg"
+  },
+  {
+    "id": "bbc-news",
+    "name": "BBC News",
+    "language": "English",
+    "country": "Bangladesh",
+    "logo": "",
+    "youtubeChannelId": "UC16niRr50-MSBwiO3YDb3RA"
+  },
+  {
+    "id": "dw-news",
+    "name": "DW News",
+    "language": "English",
+    "country": "Bangladesh",
+    "logo": "",
+    "youtubeChannelId": "UCknLrEdhRCp1aegoMqRaCZg"
+  },
+  {
+    "id": "wion",
+    "name": "WION",
+    "language": "English",
+    "country": "Bangladesh",
+    "logo": "",
+    "youtubeChannelId": "UC7pwR9P7HnL6i_0S-q5o7AA"
+  },
+  {
+    "id": "cna",
+    "name": "CNA",
+    "language": "English",
+    "country": "Bangladesh",
+    "logo": "",
+    "youtubeChannelId": "UCk2jBpq_N8aP2VjR-18349w"
   }
 ]

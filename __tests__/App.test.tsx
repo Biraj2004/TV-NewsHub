@@ -20,6 +20,9 @@ test('renders correctly', async () => {
     renderer = ReactTestRenderer.create(<App />);
   });
   await ReactTestRenderer.act(() => {
+    jest.runOnlyPendingTimers();
+  });
+  await ReactTestRenderer.act(() => {
     renderer.unmount();
   });
 });
