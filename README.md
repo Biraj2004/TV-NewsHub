@@ -101,23 +101,23 @@ graph TD
 
 ```text
 TV-NewsHub/
-├── android/               # Native Android TV build configurations & resources
-├── APK_Export/            # Pre-built release APKs (arm64, armeabi-v7a, universal)
-├── docs/                  # Technical documentation
-│     ├── Build.md         # Setup, compiler guidelines, & run commands
-│     ├── Architecture.md  # Repository patterns, hooks, and D-pad lifecycle
-│     └── Design.md        # Typography scale, focus indicators, & animation tokens
-├── public/                # Branding assets (TV banner, antenna-icon.svg)
-├── src/                   # Application source files
-│     ├── components/      # D-pad focusable components (ChannelTile, Pills, Overlays)
-│     ├── data/            # Repository pattern loaders
-│     │     ├── countries/ # Country-based channel lists (india.json, bangladesh.json)
-│     │     └── channels.ts# Static registry and dynamic export mapper
-│     ├── hooks/           # useLiveChannelResolver and useIdleTimer hooks
-│     ├── navigation/      # Stack navigation configuration
-│     ├── screens/         # HomeScreen (grid dashboard) & PlayerScreen (inline video)
-│     └── utils/           # AsyncStorage persistence layer
-└── __tests__/             # Unit tests (App.test.tsx)
+├── android/                  # Native Android TV build configurations & resources
+├── APK_Export/               # Pre-built release APKs (arm64, armeabi-v7a, universal)
+├── docs/                     # Technical documentation
+│     ├── Build.md            # Setup, compiler guidelines, & run commands
+│     ├── Architecture.md     # Repository patterns, hooks, and D-pad lifecycle
+│     └── Design.md           # Typography scale, focus indicators, & animation tokens
+├── public/                   # Branding assets (TV banner, antenna-icon.svg)
+├── src/                      # Application source files
+│     ├── components/         # D-pad focusable components (ChannelTile, Pills, Overlays)
+│     ├── data/               # Repository pattern loaders
+│     │     ├── countries/    # Country-based channel lists (india.json, bangladesh.json)
+│     │     └── channels.ts   # Static registry and dynamic export mapper
+│     ├── hooks/              # useLiveChannelResolver and useIdleTimer hooks
+│     ├── navigation/         # Stack navigation configuration
+│     ├── screens/            # HomeScreen (grid dashboard) & PlayerScreen (inline video)
+│     └── utils/              # AsyncStorage persistence layer
+└── __tests__/                # Unit tests (App.test.tsx)
 ```
 
 ---
