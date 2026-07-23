@@ -84,7 +84,7 @@ yarn-error.log
 *.app
 android/app/build/
 android/.gradle/
-APK_Export
+APK Export
 *.kiro
 
 package-lock.json

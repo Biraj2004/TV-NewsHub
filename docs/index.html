@@ -1,0 +1,1302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TV-NewsHub — Smart TV News Aggregator & 1080p Stream Engine</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #09090b;
+      --card-bg: #121217;
+      --card-border: #22222e;
+      --text-main: #f4f4f5;
+      --text-muted: #94a3b8;
+      --accent-red: #ef4444;
+      --accent-blue: #3b82f6;
+      --accent-green: #10b981;
+      --code-bg: #1a1a24;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      scrollbar-width: thin;
+      scrollbar-color: #272738 #09090b;
+    }
+
+    /* Custom Theme-Matched Medium Slim Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #09090b;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #272738;
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #3f3f58;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      padding: 0;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* Top Navigation Bar */
+    nav.top-nav {
+      background: rgba(9, 9, 11, 0.9);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--card-border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      padding: 16px 0;
+    }
+
+    .nav-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: #ffffff;
+    }
+
+    .nav-brand img {
+      width: 32px;
+      height: 32px;
+    }
+
+    .nav-brand-title {
+      font-size: 1.25rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 24px;
+      align-items: center;
+    }
+
+    .nav-link {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: color 0.2s ease;
+    }
+
+    .nav-link:hover {
+      color: var(--text-main);
+    }
+
+    .github-btn {
+      background: #ffffff;
+      color: #000000;
+      text-decoration: none;
+      padding: 8px 18px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+    }
+
+    .github-btn:hover {
+      background: #e2e8f0;
+      transform: translateY(-1px);
+    }
+
+    /* Hero Section */
+    .hero-section {
+      padding: 64px 0 48px 0;
+      text-align: center;
+    }
+
+    .hero-title {
+      font-size: 2.5rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 16px;
+      color: #ffffff;
+    }
+
+    .hero-title span {
+      background: linear-gradient(135deg, #ef4444, #ff7b7b);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-subtitle {
+      font-size: 1.1rem;
+      color: var(--text-muted);
+      max-width: 800px;
+      margin: 0 auto 28px auto;
+    }
+
+    .spec-badges-row {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .badge-chip {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      color: #cbd5e1;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.82rem;
+      font-weight: 500;
+    }
+
+    /* Section Spacing */
+    .section {
+      padding: 56px 0;
+      border-top: 1px solid var(--card-border);
+    }
+
+    .section-header {
+      margin-bottom: 32px;
+    }
+
+    .section-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 8px;
+      letter-spacing: -0.01em;
+    }
+
+    .section-desc {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    /* Screen Selector Tabs */
+    .tab-selector {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .tab-btn {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      color: var(--text-muted);
+      padding: 10px 22px;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .tab-btn:hover {
+      color: var(--text-main);
+      border-color: #333345;
+    }
+
+    .tab-btn.active {
+      background: #ffffff;
+      color: #000000;
+      border-color: #ffffff;
+      font-weight: 600;
+    }
+
+    /* Smart TV Frame Simulator */
+    .tv-simulator-outer {
+      background: #14141c;
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+    }
+
+    .tv-screen {
+      width: 100%;
+      height: 600px;
+      background: #000000;
+      border-radius: 8px;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid #1c1c28;
+    }
+
+    /* --- HOME SCREEN MOCK --- */
+    .screen-home {
+      width: 100%;
+      height: 100%;
+      background: #0b0b0d;
+      padding: 32px 48px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .home-top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+
+    .app-brand-title {
+      font-size: 1.35rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+
+    .engine-status-badge {
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      color: var(--accent-green);
+      padding: 4px 12px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+    }
+
+    .filter-group {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .filter-chip {
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--text-muted);
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+
+    .filter-chip.active {
+      background: rgba(255, 255, 255, 0.18);
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.4);
+    }
+
+    .grid-label {
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      margin-top: 8px;
+      margin-bottom: 16px;
+    }
+
+    /* Channel Grid */
+    .channel-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 20px;
+    }
+
+    .channel-tile {
+      background: #14141c;
+      border-radius: 10px;
+      padding: 16px;
+      height: 135px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .channel-tile:hover, .channel-tile.focused {
+      border-color: #ffffff;
+      transform: translateY(-2px);
+      background: #1c1c28;
+    }
+
+    .tile-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .tile-logo-frame {
+      width: 44px;
+      height: 44px;
+      background: #ffffff;
+      border-radius: 8px;
+      padding: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .tile-logo-frame img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+
+    .live-badge {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.5);
+      color: var(--accent-red);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
+
+    .tile-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #ffffff;
+    }
+
+    .tile-sub {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* --- PLAYER SCREEN MOCK --- */
+    .screen-player {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      background: #000000;
+    }
+
+    .stream-canvas-mock {
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at center, #11111a 0%, #000000 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+
+    .stream-info-pill {
+      background: rgba(18, 18, 24, 0.85);
+      border: 1px solid var(--card-border);
+      padding: 14px 28px;
+      border-radius: 10px;
+      text-align: center;
+    }
+
+    .stream-info-pill h4 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--accent-blue);
+      margin-bottom: 4px;
+    }
+
+    .stream-info-pill p {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+
+    /* Overlay Banner */
+    .player-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.4);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      z-index: 2;
+    }
+
+    .overlay-top {
+      background: rgba(11, 11, 13, 0.94);
+      padding: 24px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .overlay-channel-info {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .overlay-logo-frame {
+      width: 44px;
+      height: 44px;
+      background: #ffffff;
+      border-radius: 6px;
+      padding: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .overlay-logo-frame img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+
+    .overlay-name-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .overlay-channel-name {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    .overlay-headline-text {
+      font-size: 0.85rem;
+      color: #d1d5db;
+      margin-top: 3px;
+      max-width: 650px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .overlay-bottom {
+      background: rgba(11, 11, 13, 0.94);
+      padding: 20px 40px 28px 40px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .remote-controls-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 12px;
+    }
+
+    .btn-control {
+      width: 46px;
+      height: 46px;
+      border-radius: 23px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .btn-control:hover {
+      background: rgba(255, 255, 255, 0.2);
+      border-color: #ffffff;
+    }
+
+    .btn-control.play-main {
+      width: 56px;
+      height: 56px;
+      border-radius: 28px;
+      background: #ffffff;
+      color: #000000;
+      font-size: 1.2rem;
+      font-weight: 700;
+    }
+
+    .btn-control.grid-btn {
+      width: 72px;
+      border-radius: 18px;
+      height: 40px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .controls-hint {
+      font-size: 0.78rem;
+      color: #64748b;
+    }
+
+    /* Specifications Table */
+    .spec-table-container {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    table.spec-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    table.spec-table th {
+      background: #181822;
+      color: var(--text-muted);
+      font-size: 0.82rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--card-border);
+    }
+
+    table.spec-table td {
+      padding: 16px 20px;
+      font-size: 0.9rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      color: #e2e8f0;
+      vertical-align: middle;
+    }
+
+    table.spec-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .status-active-badge {
+      display: inline-block;
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      color: var(--accent-green);
+      padding: 3px 10px;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+
+    /* Technical Breakdown Cards */
+    .breakdown-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    .breakdown-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .breakdown-card h3 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #ffffff;
+      margin-bottom: 12px;
+      line-height: 1.3;
+    }
+
+    .breakdown-card p {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+
+    .code-tag {
+      font-family: 'Consolas', 'Courier New', monospace;
+      background: var(--code-bg);
+      color: #60a5fa;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.82rem;
+    }
+
+    .details-list {
+      list-style: none;
+      margin-top: auto;
+    }
+
+    .details-list li {
+      margin-bottom: 12px;
+      font-size: 0.88rem;
+      color: #cbd5e1;
+      line-height: 1.5;
+      padding-left: 18px;
+      position: relative;
+    }
+
+    .details-list li::before {
+      content: "•";
+      color: var(--accent-blue);
+      font-weight: bold;
+      position: absolute;
+      left: 0;
+      top: 0;
+    }
+
+    /* Edge Case Matrix Grid */
+    .edge-case-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+
+    .edge-case-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 24px;
+    }
+
+    .edge-case-card h4 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #ffffff;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .edge-case-card p {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* Security & Legal Section */
+    .legal-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+    }
+
+    .legal-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 28px;
+    }
+
+    .legal-card h3 {
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: #ffffff;
+      margin-bottom: 14px;
+    }
+
+    .legal-card p {
+      font-size: 0.9rem;
+      color: #cbd5e1;
+      line-height: 1.6;
+      margin-bottom: 14px;
+    }
+
+    /* Scroll To Top Floating Button (No Hover Movement) */
+    .scroll-to-top-btn {
+      position: fixed;
+      bottom: 32px;
+      right: 32px;
+      width: 48px;
+      height: 48px;
+      border-radius: 24px;
+      background: #ffffff;
+      color: #000000;
+      border: none;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      font-weight: 800;
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+
+    .scroll-to-top-btn.visible {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--card-border);
+      padding: 40px 0;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.88rem;
+    }
+
+    footer a {
+      color: #ffffff;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation -->
+  <nav class="top-nav">
+    <div class="container nav-container">
+      <a href="#" class="nav-brand">
+        <img src="antenna-icon.svg" alt="TV-NewsHub Icon" onerror="this.style.display='none'">
+        <span class="nav-brand-title">TV-NewsHub</span>
+      </a>
+      <div class="nav-links">
+        <a href="#simulator" class="nav-link">Simulator</a>
+        <a href="#channels" class="nav-link">Channel Specs</a>
+        <a href="#architecture" class="nav-link">Architecture & Fallbacks</a>
+        <a href="#security" class="nav-link">Security & Privacy</a>
+        <a href="#disclaimer" class="nav-link">Disclaimer & Credits</a>
+        <a href="https://github.com/Biraj2004/TV-NewsHub" target="_blank" class="github-btn">
+          <span>GitHub Repository</span>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+
+    <!-- HERO SHOWCASE HEADER -->
+    <header class="hero-section">
+      <h1 class="hero-title"><span>TV-NewsHub</span> — Smart TV Live News Engine</h1>
+      <p class="hero-subtitle">
+        A premium, open-source, dark-themed Android TV news aggregator designed for 10-foot remote viewing. Features direct 1080p HLS streaming, multi-tier fallback architecture, and real-time program guide integration.
+      </p>
+
+      <div class="spec-badges-row">
+        <span class="badge-chip">React Native TVOS v0.83</span>
+        <span class="badge-chip">TypeScript 5.8</span>
+        <span class="badge-chip">Direct 1080p HLS (.m3u8)</span>
+        <span class="badge-chip">Hardware GPU Acceleration</span>
+        <span class="badge-chip">Apache 2.0 License</span>
+        <span class="badge-chip">Open Source Repository</span>
+      </div>
+    </header>
+
+    <!-- SECTION 1: INTERACTIVE SMART TV SIMULATOR -->
+    <div id="simulator" class="section">
+      <div class="section-header">
+        <h2 class="section-title">1. Smart TV Screen Simulator</h2>
+        <p class="section-desc">Interactive visual replica of the TV-NewsHub dashboard and full-screen 1080p player</p>
+      </div>
+
+      <div class="tab-selector">
+        <button id="tab-btn-home" class="tab-btn active" onclick="switchView('home')">1. Home Screen (Channel Grid)</button>
+        <button id="tab-btn-player" class="tab-btn" onclick="switchView('player')">2. Player Screen (1080p Stream & Overlay)</button>
+      </div>
+
+      <div class="tv-simulator-outer">
+        <div class="tv-screen">
+          
+          <!-- VIEW 1: HOME SCREEN -->
+          <div id="view-home" class="screen-home">
+            <div class="home-top-bar">
+              <div class="app-brand-title">TV-NewsHub</div>
+              <div class="engine-status-badge">Stream Engine Ready</div>
+            </div>
+
+            <div class="filter-group">
+              <div class="filter-chip active">India</div>
+              <div class="filter-chip">Bangladesh</div>
+            </div>
+
+            <div class="filter-group">
+              <div class="filter-chip">All</div>
+              <div class="filter-chip active">Bengali</div>
+              <div class="filter-chip">Hindi</div>
+              <div class="filter-chip">English</div>
+            </div>
+
+            <div class="grid-label">Active Bengali News Channels (5 Configured Feeds) — Click Any Card To Test</div>
+
+            <div class="channel-grid">
+              
+              <!-- Republic Bangla -->
+              <div class="channel-tile focused" onclick="selectChannel('republic-bangla')">
+                <div class="tile-header">
+                  <div class="tile-logo-frame">
+                    <img src="logos/India/Bengali/republic-bangla.jpg" alt="Republic Bangla">
+                  </div>
+                  <span class="live-badge">LIVE</span>
+                </div>
+                <div>
+                  <div class="tile-title">Republic Bangla</div>
+                  <div class="tile-sub">1080p HLS Feed</div>
+                </div>
+              </div>
+
+              <!-- ABP Ananda -->
+              <div class="channel-tile" onclick="selectChannel('abp-ananda')">
+                <div class="tile-header">
+                  <div class="tile-logo-frame">
+                    <img src="logos/India/Bengali/abp-ananda.png" alt="ABP Ananda">
+                  </div>
+                  <span class="live-badge">LIVE</span>
+                </div>
+                <div>
+                  <div class="tile-title">ABP Ananda</div>
+                  <div class="tile-sub">Live Share Widget</div>
+                </div>
+              </div>
+
+              <!-- TV9 Bangla -->
+              <div class="channel-tile" onclick="selectChannel('tv9-bangla')">
+                <div class="tile-header">
+                  <div class="tile-logo-frame">
+                    <img src="logos/India/Bengali/tv9-bangla.png" alt="TV9 Bangla">
+                  </div>
+                  <span class="live-badge">LIVE</span>
+                </div>
+                <div>
+                  <div class="tile-title">TV9 Bangla</div>
+                  <div class="tile-sub">CloudFront HLS</div>
+                </div>
+              </div>
+
+              <!-- News18 Bangla -->
+              <div class="channel-tile" onclick="selectChannel('news18-bangla')">
+                <div class="tile-header">
+                  <div class="tile-logo-frame">
+                    <img src="logos/India/Bengali/news18-bangla.jpg" alt="News18 Bangla">
+                  </div>
+                  <span class="live-badge">LIVE</span>
+                </div>
+                <div>
+                  <div class="tile-title">News18 Bangla</div>
+                  <div class="tile-sub">Akamai HLS</div>
+                </div>
+              </div>
+
+              <!-- Zee 24 Ghanta -->
+              <div class="channel-tile" onclick="selectChannel('zee-24-ghanta')">
+                <div class="tile-header">
+                  <div class="tile-logo-frame">
+                    <img src="logos/India/Bengali/zee-24-ghanta.png" alt="Zee 24 Ghanta">
+                  </div>
+                  <span class="live-badge">LIVE</span>
+                </div>
+                <div>
+                  <div class="tile-title">Zee 24 Ghanta</div>
+                  <div class="tile-sub">Live Share Widget</div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- VIEW 2: PLAYER SCREEN -->
+          <div id="view-player" class="screen-player" style="display: none;">
+            <div class="stream-canvas-mock">
+              <div class="stream-info-pill">
+                <h4 id="player-title">1080p Full HD Active Stream</h4>
+                <p id="player-sub">Akamai Syndicate CDN (1920x1080 @ 3.9 Mbps · GPU Hardware Decoded)</p>
+              </div>
+            </div>
+
+            <div class="player-overlay">
+              <div class="overlay-top">
+                <div class="overlay-channel-info">
+                  <div class="overlay-logo-frame">
+                    <img id="active-logo" src="logos/India/Bengali/republic-bangla.jpg" alt="Logo">
+                  </div>
+                  <div>
+                    <div class="overlay-name-row">
+                      <h2 id="active-name" class="overlay-channel-name">Republic Bangla</h2>
+                      <span class="live-badge">LIVE</span>
+                    </div>
+                    <div id="active-headline" class="overlay-headline-text">
+                      Headline: Fataak News · মমতা বন্দ্যোপাধ্যায়: ২৫ জুলাই সামনে আসছে ক্যাড রিপোর্ট
+                    </div>
+                  </div>
+                </div>
+                <span style="color:var(--text-muted); font-size:0.85rem; font-weight:500;">Bengali</span>
+              </div>
+
+              <div class="overlay-bottom">
+                <div class="remote-controls-row">
+                  <div class="btn-control" onclick="navigatePrev()">◀◀</div>
+                  <div class="btn-control play-main" onclick="togglePlayState()">⏸</div>
+                  <div class="btn-control" onclick="navigateNext()">▶▶</div>
+                  <div class="btn-control grid-btn" onclick="switchView('home')">✕ Grid</div>
+                </div>
+                <div class="controls-hint">
+                  ◀ ▶ Switch channel &nbsp;·&nbsp; OK Show controls &nbsp;·&nbsp; ✕ Back to grid
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 2: CHANNEL SPECIFICATION TABLE -->
+    <div id="channels" class="section">
+      <div class="section-header">
+        <h2 class="section-title">2. Configured Live Channel Specifications</h2>
+        <p class="section-desc">Active live news channels with syndication stream parameters and CDN sources</p>
+      </div>
+
+      <div class="spec-table-container">
+        <table class="spec-table">
+          <thead>
+            <tr>
+              <th>Channel Name</th>
+              <th>Language</th>
+              <th>Stream Provider Type</th>
+              <th>CDN / Endpoint Source</th>
+              <th>Resolution Quality</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Republic Bangla</strong></td>
+              <td>Bengali</td>
+              <td>Direct HLS (<span class="code-tag">streamUrl</span>)</td>
+              <td>Akamai CDN Master Playlist</td>
+              <td><strong>1080p Full HD</strong> (1920x1080)</td>
+              <td><span class="status-active-badge">Active</span></td>
+            </tr>
+            <tr>
+              <td><strong>ABP Ananda</strong></td>
+              <td>Bengali</td>
+              <td>Official Web Embed (<span class="code-tag">embedUrl</span>)</td>
+              <td><span class="code-tag">bengali.abplive.com/sharewidget/...</span></td>
+              <td><strong>1080p HD</strong> Container</td>
+              <td><span class="status-active-badge">Active</span></td>
+            </tr>
+            <tr>
+              <td><strong>TV9 Bangla</strong></td>
+              <td>Bengali</td>
+              <td>Direct HLS (<span class="code-tag">streamUrl</span>)</td>
+              <td>CloudFront CDN Adaptive Feed</td>
+              <td><strong>720p / 1080p HD</strong></td>
+              <td><span class="status-active-badge">Active</span></td>
+            </tr>
+            <tr>
+              <td><strong>News18 Bangla</strong></td>
+              <td>Bengali</td>
+              <td>Direct HLS (<span class="code-tag">streamUrl</span>)</td>
+              <td>Akamai Broadpeak Origin Packager</td>
+              <td><strong>720p / 1080p HD</strong></td>
+              <td><span class="status-active-badge">Active</span></td>
+            </tr>
+            <tr>
+              <td><strong>Zee 24 Ghanta</strong></td>
+              <td>Bengali</td>
+              <td>Official Web Embed (<span class="code-tag">embedUrl</span>)</td>
+              <td><span class="code-tag">zeenews.india.com/bengali/...</span></td>
+              <td><strong>1080p HD</strong> Container</td>
+              <td><span class="status-active-badge">Active</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- SECTION 3: TECHNICAL ARCHITECTURE & EDGE CASE HANDLING -->
+    <div id="architecture" class="section">
+      <div class="section-header">
+        <h2 class="section-title">3. Stream Architecture & Fallback Edge Cases</h2>
+        <p class="section-desc">How TV-NewsHub fetches streams, handles network failures, and manages TV remote edge cases</p>
+      </div>
+
+      <div class="breakdown-grid" style="margin-bottom: 32px;">
+        
+        <div class="breakdown-card">
+          <h3>Multi-Provider Streaming Engine</h3>
+          <p>Implemented in <span class="code-tag">src/screens/PlayerScreen.tsx</span></p>
+          <ul class="details-list">
+            <li><strong>Tier 1 (<span class="code-tag">streamUrl</span>)</strong>: Direct HLS <span class="code-tag">.m3u8</span> playback via HTML5 video container.</li>
+            <li><strong>Tier 2 (<span class="code-tag">embedUrl</span>)</strong>: Official share widgets rendered in isolated WebView containers.</li>
+            <li><strong>Tier 3 (<span class="code-tag">youtubeChannelId</span>)</strong>: Fallback Desktop YouTube Live Resolver.</li>
+          </ul>
+        </div>
+
+        <div class="breakdown-card">
+          <h3>Live EPG & Program Title Hook</h3>
+          <p>Implemented in <span class="code-tag">src/hooks/useLiveChannelResolver.ts</span></p>
+          <ul class="details-list">
+            <li>Extracts real-time broadcast headlines (e.g. <i>"Fataak News"</i>, <i>"Aaj Banglay"</i>).</li>
+            <li>Passes <span class="code-tag">programTitle</span> dynamically to top TV overlay.</li>
+            <li>Auto-updates live status badges across the channel grid.</li>
+          </ul>
+        </div>
+
+        <div class="breakdown-card">
+          <h3>Smart TV Remote Navigation</h3>
+          <p>Implemented via <span class="code-tag">useTVEventHandler</span></p>
+          <ul class="details-list">
+            <li><strong>LEFT / RIGHT</strong>: Channel surfing zapping (instant previous/next channel).</li>
+            <li><strong>OK / CENTER</strong>: Shows/hides translucent TV overlay banner.</li>
+            <li><strong>BACK</strong>: Smooth hardware back handler returns to TV grid.</li>
+          </ul>
+        </div>
+
+      </div>
+
+      <!-- EDGE CASE MATRIX -->
+      <h3 style="font-size: 1.15rem; font-weight: 600; margin-bottom: 16px;">Edge Case Handling & Resilience</h3>
+      <div class="edge-case-grid">
+        
+        <div class="edge-case-card">
+          <h4>CDN Stream Disconnection / 404 Expiration</h4>
+          <p>If a primary HLS stream drops or encounters a CDN token rotation error, the player automatically falls back to Tier 2 (Web Embed) or Tier 3 (YouTube Live Resolver) without crashing.</p>
+        </div>
+
+        <div class="edge-case-card">
+          <h4>Ended Broadcasts / Offline Channels</h4>
+          <p>When a live stream ends or reports an offline state, an error overlay appears with a 5-second countdown timer, automatically returning the user to their last focused tile on the home grid.</p>
+        </div>
+
+        <div class="edge-case-card">
+          <h4>Cookie Consent Auto-Dismissal</h4>
+          <p><span class="code-tag">ConsentSafeYouTubePlayer</span> sets Layer 1 consent cookies (<span class="code-tag">CONSENT=YES+</span>) and injects Layer 2 DOM scripts to auto-dismiss consent prompts seamlessly.</p>
+        </div>
+
+        <div class="edge-case-card">
+          <h4>Smart TV D-Pad Focus Retention</h4>
+          <p>Includes an invisible <span class="code-tag">FocusGrabber</span> pressable layer above the video player canvas to ensure Smart TV D-Pad focus is never lost to web components.</p>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- SECTION 4: SECURITY & PRIVACY POLICY -->
+    <div id="security" class="section">
+      <div class="section-header">
+        <h2 class="section-title">4. Security Architecture & Privacy Policy</h2>
+        <p class="section-desc">Data protection principles, sandbox isolation, and zero-tracking commitments</p>
+      </div>
+
+      <div class="legal-grid">
+        
+        <div class="legal-card">
+          <h3>Privacy Policy</h3>
+          <p><strong>Zero Personal Data Collection</strong>: TV-NewsHub does not track, collect, store, or transmit any user identity, analytics, or personal behavioral data. No user accounts or registrations are required.</p>
+          <p><strong>Local Storage Only</strong>: The application uses <span class="code-tag">AsyncStorage</span> strictly on your local device to persist your last-watched channel and timestamp for 10-minute auto-resume playback.</p>
+        </div>
+
+        <div class="legal-card">
+          <h3>Security Architecture</h3>
+          <p><strong>Strict HTTPS & Transport Security</strong>: All network requests, HLS streams, and API interactions strictly enforce Transport Layer Security (TLS 1.2+ / HTTPS).</p>
+          <p><strong>Sandboxed Web Execution</strong>: Embedded web share widgets run within isolated WebViews with restricted DOM access to prevent cross-origin script injection or unauthorized access.</p>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- SECTION 5: LEGAL DISCLAIMER & CREDITS -->
+    <div id="disclaimer" class="section">
+      <div class="section-header">
+        <h2 class="section-title">5. Legal Disclaimer & Owner Credits</h2>
+        <p class="section-desc">Copyright ownership, syndication terms, and repository credits</p>
+      </div>
+
+      <div class="legal-card" style="margin-bottom: 24px;">
+        <h3>Legal & Copyright Disclaimer</h3>
+        <p>
+          TV-NewsHub is an open-source, non-commercial media aggregation application created solely for personal and educational smart TV development purposes. 
+        </p>
+        <p>
+          All news streams, video content, channel logos, brand names, and broadcast trademarks displayed or aggregated within this application belong strictly to their respective broadcasting networks and copyright holders (Republic TV, ABP Network, TV9 Network, Network18, Zee Media Corporation, etc.). TV-NewsHub does not host, re-transmit, or modify video content. All streams are accessed directly from official public syndication CDNs or official share widgets.
+        </p>
+      </div>
+
+      <div class="legal-card">
+        <h3>Owner & Repository Credits</h3>
+        <p>
+          <strong>Project Maintainer</strong>: <a href="https://github.com/Biraj2004" target="_blank" style="color:#60a5fa; font-weight:600;">Biraj (Biraj2004)</a>
+        </p>
+        <p>
+          <strong>Source Code Repository</strong>: <a href="https://github.com/Biraj2004/TV-NewsHub" target="_blank" style="color:#60a5fa; font-weight:600;">github.com/Biraj2004/TV-NewsHub</a>
+        </p>
+        <p>
+          <strong>License</strong>: Released under the open-source <a href="https://www.apache.org/licenses/LICENSE-2.0" target="_blank" style="color:#60a5fa; font-weight:600;">Apache License 2.0</a>.
+        </p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Scroll To Top Floating Button (No Hover Movement) -->
+  <button id="scrollToTopBtn" class="scroll-to-top-btn" onclick="scrollToTop()" title="Scroll to Top">
+    ↑
+  </button>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <p>TV-NewsHub &copy; 2026 Maintainer <a href="https://github.com/Biraj2004" target="_blank">Biraj2004</a>. Released under Apache License 2.0.</p>
+    </div>
+  </footer>
+
+  <script>
+    const channels = [
+      {
+        id: 'republic-bangla',
+        name: 'Republic Bangla',
+        logo: 'logos/India/Bengali/republic-bangla.jpg',
+        title: 'Direct 1080p Full HD Active Stream',
+        sub: 'Source: Akamai Syndicate CDN (1920x1080 @ 3.9 Mbps · GPU Hardware Decoded)',
+        headline: 'Headline: Fataak News · মমতা বন্দ্যোপাধ্যায়: ২৫ জুলাই সামনে আসছে ক্যাড রিপোর্ট'
+      },
+      {
+        id: 'abp-ananda',
+        name: 'ABP Ananda',
+        logo: 'logos/India/Bengali/abp-ananda.png',
+        title: 'Official Live Share Embed Widget',
+        sub: 'Source: bengali.abplive.com/sharewidget/live-tv.html (1080p HD Container)',
+        headline: 'Headline: Aaj Banglay · প্রশ্নপত্রে উত্তাল রাজধানী, রণকৌশল বৈঠকে Rahul-রা'
+      },
+      {
+        id: 'tv9-bangla',
+        name: 'TV9 Bangla',
+        logo: 'logos/India/Bengali/tv9-bangla.png',
+        title: 'CloudFront 1080p HLS Feed',
+        sub: 'Source: CloudFront Syndicate CDN (1280x720 / 1080p Adaptive Feed)',
+        headline: 'Headline: BREAKING · জন্ম-মৃত্যু শংসাপত্রে কারচুপি? | BJP vs TMC SCAM REPORT'
+      },
+      {
+        id: 'news18-bangla',
+        name: 'News18 Bangla',
+        logo: 'logos/India/Bengali/news18-bangla.jpg',
+        title: 'Akamai 1080p HLS Stream',
+        sub: 'Source: Akamai Broadpeak Origin Packager (Master HLS Playlist)',
+        headline: 'Headline: LIVE · Fake Certificate News | SIR-র সময় প্রায় সাড়ে পনেরো লাখ বার্থ সার্টিফিকেট?'
+      },
+      {
+        id: 'zee-24-ghanta',
+        name: 'Zee 24 Ghanta',
+        logo: 'logos/India/Bengali/zee-24-ghanta.png',
+        title: 'Official Live Embed Widget',
+        sub: 'Source: zeenews.india.com/bengali/live-tv/embed (Official Zee Media Live Widget)',
+        headline: 'Headline: NEET Protest · অগ্নিগর্ভ বিহার | দিল্লির সংবাদ | Zee 24 Ghanta Live'
+      }
+    ];
+
+    let currentIndex = 0;
+
+    function switchView(view) {
+      const home = document.getElementById('view-home');
+      const player = document.getElementById('view-player');
+      const btnHome = document.getElementById('tab-btn-home');
+      const btnPlayer = document.getElementById('tab-btn-player');
+
+      if (view === 'home') {
+        home.style.display = 'flex';
+        player.style.display = 'none';
+        btnHome.classList.add('active');
+        btnPlayer.classList.remove('active');
+      } else {
+        home.style.display = 'none';
+        player.style.display = 'block';
+        btnPlayer.classList.add('active');
+        btnHome.classList.remove('active');
+      }
+    }
+
+    function selectChannel(id) {
+      const idx = channels.findIndex(c => c.id === id);
+      if (idx !== -1) {
+        currentIndex = idx;
+        updatePlayer();
+      }
+      switchView('player');
+    }
+
+    function updatePlayer() {
+      const c = channels[currentIndex];
+      document.getElementById('active-logo').src = c.logo;
+      document.getElementById('active-name').innerText = c.name;
+      document.getElementById('active-headline').innerText = c.headline;
+      document.getElementById('player-title').innerText = c.title;
+      document.getElementById('player-sub').innerText = c.sub;
+    }
+
+    function navigatePrev() {
+      currentIndex = (currentIndex - 1 + channels.length) % channels.length;
+      updatePlayer();
+    }
+
+    function navigateNext() {
+      currentIndex = (currentIndex + 1) % channels.length;
+      updatePlayer();
+    }
+
+    function togglePlayState() {
+      const btn = document.querySelector('.btn-control.play-main');
+      btn.innerText = (btn.innerText === '⏸') ? '▶' : '⏸';
+    }
+
+    /* Scroll To Top Auto-Hide Logic */
+    const scrollToTopBtn = document.getElementById('scrollToTopBtn');
+
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 300) {
+        scrollToTopBtn.classList.add('visible');
+      } else {
+        scrollToTopBtn.classList.remove('visible');
+      }
+    });
+
+    function scrollToTop() {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    }
+  </script>
+
+</body>
+</html>

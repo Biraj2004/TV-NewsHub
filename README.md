@@ -189,24 +189,36 @@ Pre-built APKs for each release are also available in the [`APK_Export/`](./APK_
 
 ---
 
-## Installing the APK on an Emulator
+## How to Boot Emulator & Install APKs
 
-### Emulator Used During Development
+### 1. List Available Virtual Devices (AVDs)
 
-| Property | Value |
-|----------|-------|
-| **AVD Name** | Android TV (1080p) |
-| **Device Type** | Android TV — 1080p |
-| **API Level** | API 35 (Android 15) |
-| **Architecture** | x86_64 (emulator) |
-| **ADB Serial** | `emulator-5554` |
+List all configured Android TV emulators on your machine:
+```bash
+emulator -list-avds
+# Example output:
+# TV_4K
+```
 
-> **Note:** Android emulators run on `x86_64`. Use the **universal** APK for emulator installation.
-> ARM APKs (`arm64-v8a`, `armeabi-v7a`) will fail with `INSTALL_FAILED_NO_MATCHING_ABIS` on emulators.
+### 2. Boot & Launch the Virtual Emulator
 
-### Steps to Install
+Launch your target Android TV emulator GUI directly using Command Prompt (`cmd`) or Terminal:
 
-**1. Verify the emulator is running:**
+```cmd
+:: Standard Launch (Command Prompt)
+start emulator -avd TV_4K
+
+:: Cold Boot (Bypasses stale snapshots)
+start emulator -avd TV_4K -no-snapshot-load
+```
+
+> **Note (Windows CMD):** Using `start` opens the emulator GUI in a standalone foreground window without locking your terminal session.
+
+---
+
+### 3. Verify ADB Connection
+
+Wait for the virtual device to finish booting:
 ```bash
 adb devices
 # Expected output:
@@ -214,29 +226,63 @@ adb devices
 # emulator-5554   device
 ```
 
-**2. Install the universal APK on the emulator:**
-```bash
-adb -s emulator-5554 install -r APK_Export/TVNewsHub-v0.0.2-universal.apk
+---
+
+### 4. Install Release APKs from `APK Export/`
+
+Pre-built, ready-to-install APKs are stored in the [`APK Export/`](./APK%20Export/) directory:
+
+```text
+APK Export/
+├── TV-NewsHub-v0.0.2-universal.apk    (Recommended for all Smart TVs & Emulators)
+├── TV-NewsHub-v0.0.2-arm64-v8a.apk    (ARM64 Android Smart TVs)
+├── TV-NewsHub-v0.0.2-armeabi-v7a.apk  (32-bit ARM Legacy Smart TVs)
+├── TV-NewsHub-v0.0.2-x86_64.apk       (64-bit Emulators)
+├── TV-NewsHub-v0.0.2-x86.apk          (32-bit Emulators)
+├── Cobalt-v2.0.2-arm64.apk             (TizenTube Cobalt Smart TV App ARM64)
+└── Cobalt-v2.0.2-arm.apk               (TizenTube Cobalt Smart TV App ARM32)
 ```
 
-**3. Launch the app immediately after install:**
+#### Install TV-NewsHub:
 ```bash
-adb -s emulator-5554 shell monkey -p com.tempnewshub 1
+adb -s emulator-5554 install -r "APK Export/TV-NewsHub-v0.0.2-universal.apk"
 ```
 
-**4. (Optional) Install on a physical Android TV device:**
+#### Install Cobalt Smart TV App:
 ```bash
-# First find your device serial
-adb devices
-
-# Modern TV (2018 or newer):
-adb -s <your-device-serial> install -r APK_Export/TVNewsHub-v0.0.2-arm64-v8a.apk
-
-# Older TV:
-adb -s <your-device-serial> install -r APK_Export/TVNewsHub-v0.0.2-armeabi-v7a.apk
+adb -s emulator-5554 install -r "APK Export/Cobalt-v2.0.2-arm.apk"
 ```
 
-**5. Uninstall if needed:**
+---
+
+### 5. Launch & Control the App via ADB
+
+#### Launch TV-NewsHub:
+```bash
+adb -s emulator-5554 shell am start -n com.tempnewshub/.MainActivity
+```
+
+#### Launch Cobalt:
+```bash
+adb -s emulator-5554 shell monkey -p io.gh.reisxd.tizentube.cobalt 1
+```
+
+#### D-Pad Remote Navigation Shortcuts via ADB:
+```bash
+# Press Select / Enter
+adb -s emulator-5554 shell input keyevent 23
+
+# Navigate D-Pad (Up: 19, Down: 20, Left: 21, Right: 22)
+adb -s emulator-5554 shell input keyevent 22
+
+# Press Back Button
+adb -s emulator-5554 shell input keyevent 4
+```
+
+---
+
+### 6. Uninstall Package (If Needed)
+
 ```bash
 adb -s emulator-5554 uninstall com.tempnewshub
 ```
