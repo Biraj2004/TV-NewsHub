@@ -1,35 +1,21 @@
 [
   {
-    "id": "abp-ananda",
-    "name": "ABP Ananda",
-    "language": "Bengali",
-    "country": "India",
-    "logo": "",
-    "youtubeChannelId": "UCv3rFzn-GHGtqzXiaq3sWNg"
-  },
-  {
-    "id": "zee-24-ghanta",
-    "name": "Zee 24 Ghanta",
-    "language": "Bengali",
-    "country": "India",
-    "logo": "",
-    "youtubeChannelId": "UCdF5Q5QVbYstYrTfpgUl0ZA"
-  },
-  {
-    "id": "news18-bangla",
-    "name": "News18 Bangla",
-    "language": "Bengali",
-    "country": "India",
-    "logo": "",
-    "youtubeChannelId": "UCbf0XHULBkTfv2hBjaaDw9Q"
-  },
-  {
     "id": "republic-bangla",
     "name": "Republic Bangla",
     "language": "Bengali",
     "country": "India",
     "logo": "",
-    "youtubeChannelId": "UCajVjEHDoVn_AHsunUZz_EQ"
+    "youtubeChannelId": "UCajVjEHDoVn_AHsunUZz_EQ",
+    "streamUrl": "https://vg-republictvlive.akamaized.net/v1/master/611d79b11b77e2f571934fd80ca1413453772ac7/vglive-sk-456368/main.m3u8"
+  },
+  {
+    "id": "abp-ananda",
+    "name": "ABP Ananda",
+    "language": "Bengali",
+    "country": "India",
+    "logo": "",
+    "youtubeChannelId": "UCv3rFzn-GHGtqzXiaq3sWNg",
+    "embedUrl": "https://bengali.abplive.com/sharewidget/live-tv.html"
   },
   {
     "id": "tv9-bangla",
@@ -37,7 +23,26 @@
     "language": "Bengali",
     "country": "India",
     "logo": "",
-    "youtubeChannelId": "UCHCR4UFsGwd_VcDa0-a4haw"
+    "youtubeChannelId": "UCHCR4UFsGwd_VcDa0-a4haw",
+    "streamUrl": "https://dyjmyiv3bp2ez.cloudfront.net/pub-iotv9banaen8yq/liveabr/playlist.m3u8"
+  },
+  {
+    "id": "news18-bangla",
+    "name": "News18 Bangla",
+    "language": "Bengali",
+    "country": "India",
+    "logo": "",
+    "youtubeChannelId": "UCbf0XHULBkTfv2hBjaaDw9Q",
+    "streamUrl": "https://n18syndication.akamaized.net/bpk-tv/News18_Bangla_NW18_MOB/output01/master.m3u8"
+  },
+  {
+    "id": "zee-24-ghanta",
+    "name": "Zee 24 Ghanta",
+    "language": "Bengali",
+    "country": "India",
+    "logo": "",
+    "youtubeChannelId": "UCdF5Q5QVbYstYrTfpgUl0ZA",
+    "embedUrl": "https://zeenews.india.com/bengali/live-tv/embed"
   },
   {
     "id": "ndtv-india",

@@ -7,7 +7,9 @@ export interface Channel {
   language: string;
   country: string;
   logo: string;
-  youtubeChannelId: string;
+  youtubeChannelId?: string;
+  streamUrl?: string; // Direct HLS (.m3u8) feed (e.g. 1080p Akamai/CloudFront CDN)
+  embedUrl?: string;  // Web embed feed
 }
 
 // Flat list containing all channels from all countries

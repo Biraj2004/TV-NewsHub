@@ -16,7 +16,7 @@ export function ConsentSafeYouTubePlayer(props: YoutubeIframeProps) {
 
     const setConsentCookies = async () => {
       try {
-        console.log('[ConsentSafeYouTubePlayer] Setting Layer 1 Consent Cookies...');
+        if (__DEV__) { console.log('[ConsentSafeYouTubePlayer] Setting Layer 1 Consent Cookies...'); }
         
         const expiryDate = new Date();
         expiryDate.setFullYear(expiryDate.getFullYear() + 5); // 5 years expiry
@@ -40,7 +40,7 @@ export function ConsentSafeYouTubePlayer(props: YoutubeIframeProps) {
           expires: expiryStr,
         });
 
-        console.log('[ConsentSafeYouTubePlayer] Layer 1 Consent Cookies successfully set!');
+        if (__DEV__) { console.log('[ConsentSafeYouTubePlayer] Layer 1 Consent Cookies successfully set!'); }
         isConsentCookieSet = true;
         setCookiesReady(true);
       } catch (err) {
@@ -111,7 +111,7 @@ export function ConsentSafeYouTubePlayer(props: YoutubeIframeProps) {
     injectedJavaScript: layer2Script,
     onNavigationStateChange: (navState: any) => {
       if (navState.url && navState.url.includes('consentsafe-layer2-fired')) {
-        console.log('[ConsentSafeYouTubePlayer] DEV ONLY: Layer 2 (fallback) consent dialog dismiss fired!');
+        if (__DEV__) { console.log('[ConsentSafeYouTubePlayer] DEV ONLY: Layer 2 (fallback) consent dialog dismiss fired!'); }
       }
       if (props.webViewProps && props.webViewProps.onNavigationStateChange) {
         props.webViewProps.onNavigationStateChange(navState);

@@ -1,26 +1,117 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, StyleSheet, Dimensions, BackHandler, Pressable, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, BackHandler, Pressable, ActivityIndicator, useWindowDimensions } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { WebView } from 'react-native-webview';
 import { ConsentSafeYouTubePlayer } from '../components/ConsentSafeYouTubePlayer';
 import { RootStackParamList } from '../navigation/AppNavigator';
 import { PlayerOverlay } from '../components/PlayerOverlay';
 import { useIdleTimer } from '../hooks/useIdleTimer';
 import { useLiveChannelResolver } from '../hooks/useLiveChannelResolver';
 import { setLastWatchedChannel } from '../utils/storage';
+import { sanitizeUrl } from '../utils/sanitize';
 import { useTVEventHandler } from 'react-native';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Player'>;
 
-const { width, height } = Dimensions.get('window');
+/**
+ * Build the HLS player HTML shell. streamUrl is sanitized before injection
+ * to prevent XSS via malformed or hijacked CDN URLs.
+ */
+const getHlsHtml = (rawStreamUrl: string) => {
+  const streamUrl = sanitizeUrl(rawStreamUrl);
+  return `
+  <!DOCTYPE html>
+  <html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; background: #000 !important; }
+      html, body { width: 100vw; height: 100vh; overflow: hidden; background: #000; display: flex; justify-content: center; align-items: center; }
+      video { width: 100vw; height: 100vh; max-width: 100vw; max-height: 100vh; object-fit: contain; background: #000; }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+  </head>
+  <body>
+    <video id="video" autoplay playsinline webkit-playsinline></video>
+    <script>
+      var video = document.getElementById('video');
+      var videoSrc = '${streamUrl}';
+      if (Hls.isSupported()) {
+        var hls = new Hls({
+          maxBufferLength: 30,
+          maxMaxBufferLength: 60,
+          startLevel: -1
+        });
+        hls.loadSource(videoSrc);
+        hls.attachMedia(video);
+        hls.on(Hls.Events.MANIFEST_PARSED, function() {
+          if (hls.levels && hls.levels.length > 0) {
+            hls.currentLevel = hls.levels.length - 1; // Force highest quality (1080p)
+          }
+          video.play();
+        });
+        hls.on(Hls.Events.ERROR, function (event, data) {
+          if (data.fatal) {
+            switch (data.type) {
+              case Hls.ErrorTypes.NETWORK_ERROR:
+                hls.startLoad();
+                break;
+              case Hls.ErrorTypes.MEDIA_ERROR:
+                hls.recoverMediaError();
+                break;
+              default:
+                hls.destroy();
+                break;
+            }
+          }
+        });
+      } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+        video.src = videoSrc;
+        video.addEventListener('loadedmetadata', function() {
+          video.play();
+        });
+      }
+    </script>
+  </body>
+  </html>
+`;
+};
+
+/**
+ * Build the embed iframe HTML shell. embedUrl is sanitized before injection.
+ */
+const getEmbedHtml = (rawEmbedUrl: string) => {
+  const embedUrl = sanitizeUrl(rawEmbedUrl);
+  return `
+  <!DOCTYPE html>
+  <html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; background: #000 !important; }
+      html, body { width: 100vw; height: 100vh; overflow: hidden; background: #000; display: flex; justify-content: center; align-items: center; }
+      iframe { width: 100vw !important; height: 100vh !important; max-width: 100vw !important; max-height: 100vh !important; border: none !important; object-fit: contain !important; }
+    </style>
+  </head>
+  <body>
+    <iframe src="${embedUrl}" frameborder="0" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen style="width:100vw; height:100vh;"></iframe>
+  </body>
+  </html>
+`;
+};
 
 export function PlayerScreen({ route, navigation }: Props) {
   const { filteredChannels, initialIndex } = route.params;
+  // useWindowDimensions updates if the window size changes (unlike module-level Dimensions.get)
+  const { width, height } = useWindowDimensions();
 
   const [currentIndex, setCurrentIndex] = useState<number>(initialIndex);
   const currentChannel = filteredChannels[currentIndex];
 
-  // Resolve current channel videoId
-  const { videoId, isLoading, isError } = useLiveChannelResolver(currentChannel.youtubeChannelId);
+  // Resolve current channel videoId & videoTitle (skipped for Tier 1/2 channels)
+  const { videoId, videoTitle, isLoading, isError } = useLiveChannelResolver(
+    currentChannel.streamUrl || currentChannel.embedUrl ? null : (currentChannel.youtubeChannelId || null)
+  );
 
   const [isPlaying, setIsPlaying] = useState<boolean>(true);
   const [playbackError, setPlaybackError] = useState<string | null>(null);
@@ -32,9 +123,7 @@ export function PlayerScreen({ route, navigation }: Props) {
   useEffect(() => {
     setPlaybackError(null);
     setIsPlaying(true);
-    // Persist as last watched
     setLastWatchedChannel(currentChannel.id);
-    // Hide overlay immediately when switching channels so timer starts fresh
     hideOverlay();
   }, [currentIndex, currentChannel, hideOverlay]);
 
@@ -62,7 +151,7 @@ export function PlayerScreen({ route, navigation }: Props) {
     return () => backHandler.remove();
   }, [handleBack]);
 
-  // TV Remote: only show overlay on select/center; navigate channels on left/right
+  // TV Remote: show overlay on select/center; navigate channels on left/right
   useTVEventHandler((event) => {
     if (!event) return;
     if (event.eventType === 'left' || event.eventType === 'dpadLeft') {
@@ -77,7 +166,8 @@ export function PlayerScreen({ route, navigation }: Props) {
     }
   });
 
-  const isOffline = isError || (!isLoading && !videoId);
+  const hasDirectSource = !!(currentChannel.streamUrl || currentChannel.embedUrl);
+  const isOffline = !hasDirectSource && (isError || (!isLoading && !videoId));
   const hasError = playbackError || isOffline;
 
   // Auto-return to grid on ended or offline channels
@@ -96,15 +186,53 @@ export function PlayerScreen({ route, navigation }: Props) {
     }
   };
 
-  const onPlayerError = (_error: any) => {
+  const onPlayerError = (error: unknown) => {
+    if (__DEV__) { console.warn('[PlayerScreen] Playback error:', error); }
     setPlaybackError('Playback error or channel offline.');
   };
 
   return (
     <View style={styles.container}>
-      {/* YouTube Player */}
+      {/* Video Player Section */}
       <View style={styles.playerWrapper}>
-        {videoId && !hasError ? (
+        {currentChannel.streamUrl ? (
+          /* Tier 1: Direct 1080p HLS .m3u8 Feed */
+          <WebView
+            key={currentChannel.id}
+            source={{ html: getHlsHtml(currentChannel.streamUrl) }}
+            style={styles.webViewBase}
+            containerStyle={styles.webViewContainer}
+            allowsInlineMediaPlayback={true}
+            allowsFullscreenVideo={true}
+            mediaPlaybackRequiresUserAction={false}
+            javaScriptEnabled={true}
+            domStorageEnabled={true}
+            originWhitelist={['*']}
+            scalesPageToFit={false}
+            showsHorizontalScrollIndicator={false}
+            showsVerticalScrollIndicator={false}
+            onError={() => setPlaybackError('HLS stream loading error.')}
+          />
+        ) : currentChannel.embedUrl ? (
+          /* Tier 2: Official Channel Web Embed */
+          <WebView
+            key={currentChannel.id}
+            source={{ html: getEmbedHtml(currentChannel.embedUrl) }}
+            style={styles.webViewBase}
+            containerStyle={styles.webViewContainer}
+            allowsInlineMediaPlayback={true}
+            allowsFullscreenVideo={true}
+            mediaPlaybackRequiresUserAction={false}
+            javaScriptEnabled={true}
+            domStorageEnabled={true}
+            originWhitelist={['*']}
+            scalesPageToFit={false}
+            showsHorizontalScrollIndicator={false}
+            showsVerticalScrollIndicator={false}
+            onError={() => setPlaybackError('Embed loading error.')}
+          />
+        ) : videoId && !hasError ? (
+          /* Tier 3: Resolved YouTube Live Stream */
           <ConsentSafeYouTubePlayer
             height={height}
             width={width}
@@ -115,10 +243,11 @@ export function PlayerScreen({ route, navigation }: Props) {
             onError={onPlayerError}
             playList={undefined}
             initialPlayerParams={{
-              controls: false, // Hide default player chrome controls
+              controls: false,
               cc_load_policy: 0,
               modestbranding: 1,
               rel: false,
+              preventFullScreen: true,
             } as any}
           />
         ) : (
@@ -149,6 +278,7 @@ export function PlayerScreen({ route, navigation }: Props) {
         channelName={currentChannel.name}
         channelLogo={currentChannel.logo}
         language={currentChannel.language}
+        programTitle={videoTitle}
         isPlaying={isPlaying}
         onTogglePlay={() => setIsPlaying((p) => !p)}
         onNextChannel={handleNextChannel}
@@ -178,6 +308,18 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: '#000000',
+  },
+  // WebView fills the absolute playerWrapper; flex:1 + percentage dimensions
+  // must be applied as separate named styles so StyleSheet can handle them
+  webViewBase: {
+    flex: 1,
+    backgroundColor: '#000000',
+  },
+  webViewContainer: {
+    flex: 1,
+    width: '100%' as unknown as number,
+    height: '100%' as unknown as number,
     backgroundColor: '#000000',
   },
   loadingWrapper: {

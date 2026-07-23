@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 
 export function useIdleTimer(timeoutMs: number = 4000) {
   const [isVisible, setIsVisible] = useState<boolean>(true);
-  const timerRef = useRef<any>(null);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const startHideTimer = useCallback(() => {
     if (timerRef.current) {

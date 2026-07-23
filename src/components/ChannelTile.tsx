@@ -10,7 +10,9 @@ export interface Channel {
   language: string;
   country: string;
   logo: string;
-  youtubeChannelId: string;
+  youtubeChannelId?: string;
+  streamUrl?: string;
+  embedUrl?: string;
 }
 
 interface ChannelTileProps {
@@ -32,15 +34,16 @@ export function ChannelTile({
   height,
   onLiveCheckError,
 }: ChannelTileProps) {
-  const { videoId, isLoading, isError } = useLiveChannelResolver(channel.youtubeChannelId);
+  const hasDirectSource = !!(channel.streamUrl || channel.embedUrl);
+  const { videoId, isLoading, isError } = useLiveChannelResolver(hasDirectSource ? null : (channel.youtubeChannelId || null));
 
   React.useEffect(() => {
-    if (isError && onLiveCheckError) {
+    if (isError && onLiveCheckError && !hasDirectSource) {
       onLiveCheckError();
     }
-  }, [isError, onLiveCheckError]);
+  }, [isError, onLiveCheckError, hasDirectSource]);
 
-  if (isLoading) {
+  if (isLoading && !hasDirectSource) {
     // Skeleton placeholder card during load
     return (
       <View style={[styles.tile, width !== undefined && { width, flex: 0 }, height !== undefined && { height }, styles.skeleton]}>
@@ -51,11 +54,13 @@ export function ChannelTile({
     );
   }
 
-  const isOffline = !isLoading && !isError && !videoId;
+  const isOffline = !hasDirectSource && !isLoading && !isError && !videoId;
   const localLogoSource = localLogos[channel.id];
 
   let badgeType: BadgeType | undefined = undefined;
-  if (isLoading) {
+  if (hasDirectSource) {
+    badgeType = 'live';
+  } else if (isLoading) {
     badgeType = 'checking';
   } else if (!isError) {
     badgeType = videoId ? 'live' : 'offline';
@@ -70,7 +75,7 @@ export function ChannelTile({
           onPress(channel, videoId || '');
         }
       }}
-      style={({ focused }) => [
+      style={({ focused }: { focused: boolean }) => [
         styles.tile,
         width !== undefined && { width, flex: 0 },
         height !== undefined && { height },

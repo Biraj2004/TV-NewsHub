@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
-import { View, Text, StyleSheet, FlatList, ScrollView, ActivityIndicator, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, FlatList, ScrollView, ActivityIndicator, Dimensions, AppState, AppStateStatus } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/AppNavigator';
 import { CountryTabs } from '../components/CountryTabs';
@@ -19,46 +19,12 @@ const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const TILE_WIDTH = (SCREEN_WIDTH - 144) / 5;
 const TILE_HEIGHT = TILE_WIDTH * (11 / 16);
 
-// Helper component for right-edge fade overlay
+/**
+ * Right-edge fade overlay — single absolutely-positioned View instead of 20.
+ * Uses a pre-computed StyleSheet entry so it is never recreated on re-render.
+ */
 function RightEdgeFade() {
-  const segments = [];
-  const fadeWidth = 40;
-  const numSteps = 20;
-  const stepWidth = fadeWidth / numSteps;
-
-  for (let i = 0; i < numSteps; i++) {
-    const opacity = (i / (numSteps - 1)) ** 1.5;
-    segments.push(
-      <View
-        key={i}
-        style={{
-          position: 'absolute',
-          top: 0,
-          bottom: 0,
-          left: i * stepWidth,
-          width: stepWidth,
-          backgroundColor: '#0b0b0d',
-          opacity: opacity,
-        }}
-      />
-    );
-  }
-
-  return (
-    <View
-      style={{
-        position: 'absolute',
-        top: 0,
-        bottom: 0,
-        right: 0,
-        width: fadeWidth,
-        flexDirection: 'row',
-        pointerEvents: 'none',
-      }}
-    >
-      {segments}
-    </View>
-  );
+  return <View style={styles.rightEdgeFade} pointerEvents="none" />;
 }
 
 // Reusable horizontal channel row component
@@ -88,7 +54,7 @@ const ChannelRow = React.memo(({
       clearTimeout(scrollTimeoutRef.current);
     }
 
-    // Scroll carriage logic: focused tile lands with 1 tile visible to its left (index >= 2)
+    // Scroll carriage: focused tile shows 1 tile visible to its left (index >= 2)
     let targetOffset = 0;
     if (colIndex >= 2) {
       targetOffset = (colIndex - 1) * (TILE_WIDTH + 16);
@@ -141,6 +107,8 @@ const ChannelRow = React.memo(({
   );
 });
 
+let globalHasProcessAutoLaunched = false;
+
 export function HomeScreen({ navigation, route }: Props) {
   const isConnected = useNetworkStatus();
   const [isLiveCheckDegraded, setIsLiveCheckDegraded] = useState<boolean>(false);
@@ -156,9 +124,9 @@ export function HomeScreen({ navigation, route }: Props) {
   const verticalScrollRef = useRef<ScrollView>(null);
   const verticalScrollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Update clock every second
+  // Clock — only ticks when app is in the foreground (performance: stops in background)
   useEffect(() => {
-    const updateClock = () => {
+    const formatTime = () => {
       const date = new Date();
       setTimeStr(
         date.toLocaleTimeString('en-US', {
@@ -169,12 +137,32 @@ export function HomeScreen({ navigation, route }: Props) {
       );
     };
 
-    updateClock();
-    const interval = setInterval(updateClock, 1000);
-    return () => clearInterval(interval);
+    formatTime();
+    let interval: ReturnType<typeof setInterval> | null = setInterval(formatTime, 1000);
+
+    const handleAppState = (nextState: AppStateStatus) => {
+      if (nextState === 'active') {
+        if (!interval) {
+          formatTime();
+          interval = setInterval(formatTime, 1000);
+        }
+      } else {
+        if (interval) {
+          clearInterval(interval);
+          interval = null;
+        }
+      }
+    };
+
+    const subscription = AppState.addEventListener('change', handleAppState);
+
+    return () => {
+      if (interval) clearInterval(interval);
+      subscription.remove();
+    };
   }, []);
 
-  // Handle auto-launching the last watched channel if within 10 minutes
+  // Handle auto-launching the last watched channel ONCE per app process lifetime
   useEffect(() => {
     let isMounted = true;
 
@@ -186,14 +174,15 @@ export function HomeScreen({ navigation, route }: Props) {
         const matched = allChannels.find((c) => c.id === saved.id);
         if (matched) {
           setLastWatchedName(matched.name);
-          
+
           const timeDiff = Date.now() - saved.timestamp;
-          if (timeDiff < 600000 && !checkedAutoLaunch) {
+          if (timeDiff < 600000 && !globalHasProcessAutoLaunched) {
+            globalHasProcessAutoLaunched = true;
             setCheckedAutoLaunch(true);
-            
+
             const countryFiltered = allChannels.filter((c) => c.country === matched.country);
             const langFiltered = countryFiltered.filter(
-              (c) => matched.language === 'All' || c.language === matched.language
+              (c) => c.language === matched.language
             );
             const idx = langFiltered.findIndex((c) => c.id === matched.id);
 
@@ -206,6 +195,7 @@ export function HomeScreen({ navigation, route }: Props) {
           }
         }
       }
+      globalHasProcessAutoLaunched = true;
       setCheckedAutoLaunch(true);
     };
 
@@ -214,13 +204,19 @@ export function HomeScreen({ navigation, route }: Props) {
     return () => {
       isMounted = false;
     };
-  }, [allChannels, checkedAutoLaunch, navigation]);
+  }, [allChannels, navigation]);
 
-  // Determine available countries
-  const countries = Array.from(new Set(allChannels.map((c) => c.country)));
+  // Derive available countries — memoized so Array.from(new Set()) is not called on every render
+  const countries = useMemo(
+    () => Array.from(new Set(allChannels.map((c) => c.country))),
+    [allChannels],
+  );
 
   // Filter channels based on selected country
-  const channelsByCountry = allChannels.filter((c) => c.country === selectedCountry);
+  const channelsByCountry = useMemo(
+    () => allChannels.filter((c) => c.country === selectedCountry),
+    [allChannels, selectedCountry],
+  );
 
   // Determine available languages for selected country
   const languages = useMemo(() => {
@@ -245,7 +241,6 @@ export function HomeScreen({ navigation, route }: Props) {
     await setLastWatchedChannel(channel.id);
     setLastWatchedName(channel.name);
 
-    // Compute the filtered channels list for this channel's language row
     const channelsInRow = channelsByCountry.filter((c) => c.language === channel.language);
     const index = channelsInRow.findIndex((c) => c.id === channel.id);
 
@@ -484,6 +479,16 @@ const styles = StyleSheet.create({
     paddingLeft: 32,
     paddingRight: 40,
     paddingVertical: 4,
+  },
+  // Single-element right-edge fade (replaces 20-View gradient loop)
+  rightEdgeFade: {
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    right: 0,
+    width: 48,
+    backgroundColor: '#0b0b0d',
+    opacity: 0.85,
   },
   footerHelp: {
     color: '#6b6b70',

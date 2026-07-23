@@ -4,7 +4,7 @@
 > **Maintainer**: Biraj2004 ([GitHub Repository](https://github.com/Biraj2004/TV-NewsHub))  
 > **Target OS**: Android TV | Google TV | Fire TV (React Native TVOS v0.83)  
 > **License**: Apache 2.0  
-> **Current Version**: `v0.0.2`  
+> **Current Version**: `v0.0.3`  
 
 ---
 
@@ -15,11 +15,11 @@ Whenever building release APKs (`gradlew assembleRelease`), **ALWAYS** copy the 
 
 ```text
 APK Export/
-├── TV-NewsHub-v0.0.2-universal.apk    (Recommended for all Smart TVs)
-├── TV-NewsHub-v0.0.2-arm64-v8a.apk    (ARM64 Android Smart TVs)
-├── TV-NewsHub-v0.0.2-armeabi-v7a.apk  (32-bit ARM Legacy TVs)
-├── TV-NewsHub-v0.0.2-x86_64.apk       (64-bit Emulators/Intel TVs)
-├── TV-NewsHub-v0.0.2-x86.apk          (32-bit Emulators/Intel TVs)
+├── TV-NewsHub-v0.0.3-universal.apk    (Recommended for all Smart TVs)
+├── TV-NewsHub-v0.0.3-arm64-v8a.apk    (ARM64 Android Smart TVs)
+├── TV-NewsHub-v0.0.3-armeabi-v7a.apk  (32-bit ARM Legacy TVs)
+├── TV-NewsHub-v0.0.3-x86_64.apk       (64-bit Emulators/Intel TVs)
+├── TV-NewsHub-v0.0.3-x86.apk          (32-bit Emulators/Intel TVs)
 ├── Cobalt-v2.0.2-arm64.apk             (TizenTube Cobalt Smart TV App ARM64)
 └── Cobalt-v2.0.2-arm.apk               (TizenTube Cobalt Smart TV App ARM)
 ```
@@ -39,8 +39,8 @@ start emulator -avd TV_4K
 :: 3. Cold Boot (Bypasses stale snapshots)
 start emulator -avd TV_4K -no-snapshot-load
 
-:: 4. Install TV-NewsHub v0.0.2
-adb -s emulator-5554 install -r "APK Export/TV-NewsHub-v0.0.2-universal.apk"
+:: 4. Install TV-NewsHub v0.0.3
+adb -s emulator-5554 install -r "APK Export/TV-NewsHub-v0.0.3-universal.apk"
 
 :: 5. Install Cobalt Smart TV App
 adb -s emulator-5554 install -r "APK Export/Cobalt-v2.0.2-arm.apk"

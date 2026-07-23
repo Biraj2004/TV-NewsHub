@@ -11,7 +11,7 @@
 <p align="center">
   <a href="https://reactnative.dev/"><img src="https://img.shields.io/badge/Framework-React%20Native%20TVOS%20v0.83-blue.svg?style=flat-square&logo=react" alt="React Native TVOS" /></a>
   <a href="https://www.typescriptlang.org/"><img src="https://img.shields.io/badge/Language-TypeScript-blue.svg?style=flat-square&logo=typescript" alt="TypeScript" /></a>
-  <img src="https://img.shields.io/badge/Version-0.0.2-brightgreen.svg?style=flat-square" alt="Version 0.0.2" />
+  <img src="https://img.shields.io/badge/Version-0.0.3-brightgreen.svg?style=flat-square" alt="Version 0.0.3" />
   <a href="https://developer.android.com/tv"><img src="https://img.shields.io/badge/Platform-Android%20TV%20%7C%20Google%20TV%20%7C%20Fire%20TV-green.svg?style=flat-square&logo=android" alt="Target Platforms" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-Apache%202.0-orange.svg?style=flat-square" alt="License" /></a>
   <a href="SECURITY.md"><img src="https://img.shields.io/badge/Security-Policy%20Active-brightgreen.svg?style=flat-square" alt="Security Policy" /></a>
@@ -185,7 +185,7 @@ android/app/build/outputs/apk/release/
   app-universal-release.apk    — All architectures (use for emulators)
 ```
 
-Pre-built APKs for each release are also available in the [`APK_Export/`](./APK_Export/) folder.
+Pre-built APKs for each release are also available in the [`APK Export/`](./APK Export/) folder.
 
 ---
 
@@ -234,18 +234,18 @@ Pre-built, ready-to-install APKs are stored in the [`APK Export/`](./APK%20Expor
 
 ```text
 APK Export/
-├── TV-NewsHub-v0.0.2-universal.apk    (Recommended for all Smart TVs & Emulators)
-├── TV-NewsHub-v0.0.2-arm64-v8a.apk    (ARM64 Android Smart TVs)
-├── TV-NewsHub-v0.0.2-armeabi-v7a.apk  (32-bit ARM Legacy Smart TVs)
-├── TV-NewsHub-v0.0.2-x86_64.apk       (64-bit Emulators)
-├── TV-NewsHub-v0.0.2-x86.apk          (32-bit Emulators)
+├── TV-NewsHub-v0.0.3-universal.apk    (Recommended for all Smart TVs & Emulators)
+├── TV-NewsHub-v0.0.3-arm64-v8a.apk    (ARM64 Android Smart TVs)
+├── TV-NewsHub-v0.0.3-armeabi-v7a.apk  (32-bit ARM Legacy Smart TVs)
+├── TV-NewsHub-v0.0.3-x86_64.apk       (64-bit Emulators)
+├── TV-NewsHub-v0.0.3-x86.apk          (32-bit Emulators)
 ├── Cobalt-v2.0.2-arm64.apk             (TizenTube Cobalt Smart TV App ARM64)
 └── Cobalt-v2.0.2-arm.apk               (TizenTube Cobalt Smart TV App ARM32)
 ```
 
 #### Install TV-NewsHub:
 ```bash
-adb -s emulator-5554 install -r "APK Export/TV-NewsHub-v0.0.2-universal.apk"
+adb -s emulator-5554 install -r "APK Export/TV-NewsHub-v0.0.3-universal.apk"
 ```
 
 #### Install Cobalt Smart TV App:
@@ -293,7 +293,8 @@ adb -s emulator-5554 uninstall com.tempnewshub
 
 | Version | Changes |
 |---------|---------|
-| **0.0.2** | Fixed all 25 channel IDs (verified via YouTube RSS API). Rewrote live stream resolver using YouTube's UULV RSS feed. Fixed overlay zIndex for player controls. Auto-hide timer now works correctly. Cookie-consent auto-dismiss. |
+| **0.0.3** | Configured multi-tier stream engine (Direct HLS 1080p master playlists, official web share widgets, and YouTube resolver). Added full Smart TV showcase web app (`public/screens.html`), custom theme-matched scrollbar, and auto-hiding scroll button. Established proper APK Export naming convention. |
+| **0.0.2** | Fixed channel IDs. Rewrote live stream resolver. Fixed overlay zIndex & auto-hide timer. Cookie-consent auto-dismiss. |
 | **0.0.1** | Initial release. Core grid UI, player screen, country/language filtering, D-pad navigation. |
 
 ---
