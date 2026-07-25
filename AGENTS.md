@@ -4,7 +4,7 @@
 > **Maintainer**: Biraj2004 ([GitHub Repository](https://github.com/Biraj2004/TV-NewsHub))  
 > **Target OS**: Android TV | Google TV | Fire TV (React Native TVOS v0.83)  
 > **License**: Apache 2.0  
-> **Current Version**: `v0.0.3`  
+> **Current Version**: `v0.0.5`  
 
 ---
 
@@ -16,11 +16,11 @@ Whenever building release APKs (`gradlew assembleRelease`), **ALWAYS** copy the 
 
 ```text
 APK Export/
-├── TV-NewsHub-v0.0.3-universal.apk    (Recommended for all Smart TVs)
-├── TV-NewsHub-v0.0.3-arm64-v8a.apk    (ARM64 Android Smart TVs)
-├── TV-NewsHub-v0.0.3-armeabi-v7a.apk  (32-bit ARM Legacy TVs)
-├── TV-NewsHub-v0.0.3-x86_64.apk       (64-bit Emulators/Intel TVs)
-├── TV-NewsHub-v0.0.3-x86.apk          (32-bit Emulators/Intel TVs)
+├── TV-NewsHub-v0.0.5-universal.apk    (Recommended for all Smart TVs)
+├── TV-NewsHub-v0.0.5-arm64-v8a.apk    (ARM64 Android Smart TVs)
+├── TV-NewsHub-v0.0.5-armeabi-v7a.apk  (32-bit ARM Legacy TVs)
+├── TV-NewsHub-v0.0.5-x86_64.apk       (64-bit Emulators/Intel TVs)
+├── TV-NewsHub-v0.0.5-x86.apk          (32-bit Emulators/Intel TVs)
 ├── Cobalt-v2.0.2-arm64.apk             (TizenTube Cobalt Smart TV App ARM64)
 └── Cobalt-v2.0.2-arm.apk               (TizenTube Cobalt Smart TV App ARM)
 ```
@@ -79,15 +79,16 @@ flowchart TD
 
 ## 🇧🇩 Configured Bengali News Channels
 
-All 5 primary Bengali news channels are configured in [`src/data/countries/india.json`](file:///e:/01.%20GitHub%20Repo%20Projects/TV-NewsHub/src/data/countries/india.json):
+All 6 Bengali news channels are configured in [`src/data/countries/india.json`](file:///e:/01.%20GitHub%20Repo%20Projects/TV-NewsHub/src/data/countries/india.json):
 
 | Channel Name | Language | Stream Type | CDN / Endpoint Source | Resolution | Status |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | **Republic Bangla** | Bengali | Direct HLS (`streamUrl`) | Akamai CDN Master Playlist | 1080p Full HD | Active |
-| **ABP Ananda** | Bengali | Web Share (`embedUrl`) | `bengali.abplive.com/sharewidget/...` | 1080p Container | Active |
+| **ABP Ananda** | Bengali | Direct HLS (`streamUrl`) | CloudFront CDN Adaptive Stream | 1080p Full HD | Active |
 | **TV9 Bangla** | Bengali | Direct HLS (`streamUrl`) | CloudFront CDN Adaptive Stream | 1080p / 720p HD | Active |
 | **News18 Bangla** | Bengali | Direct HLS (`streamUrl`) | Akamai Broadpeak Origin Packager | 1080p / 720p HD | Active |
-| **Zee 24 Ghanta** | Bengali | Web Share (`embedUrl`) | `zeenews.india.com/bengali/...` | 1080p Container | Active |
+| **Calcutta News** | Bengali | Direct HLS (`streamUrl`) | CloudFront CDN Adaptive Stream | 1080p Full HD | Active |
+| **Zee 24 Ghanta** | Bengali | Web Embed (`embedUrl`) + YT Fallback | `zeenews.india.com/bengali/...` | 1080p Container | Active |
 
 ---
 
@@ -109,7 +110,8 @@ All 5 primary Bengali news channels are configured in [`src/data/countries/india
 
 ---
 
-## 🌐 Documentation & Interactive Replica
+## 🌐 Documentation & Architecture Guides
 
+* **Stream Resolver & Fallback Architecture**: [`guides/fallback-resolver-guide.md`](file:///e:/01.%20GitHub%20Repo%20Projects/TV-NewsHub/guides/fallback-resolver-guide.md)
 * **Interactive Showcase Web App**: [`public/screens.html`](file:///e:/01.%20GitHub%20Repo%20Projects/TV-NewsHub/public/screens.html)
 * **Features**: Interactive Smart TV screen simulator, local logo asset rendering, theme-matched medium slim scrollbar, auto-hiding scroll-to-top button, security policy, privacy statement, and legal copyright disclaimers.
