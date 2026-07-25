@@ -2,7 +2,7 @@ const channels = [
       {
         id: 'republic-bangla',
         name: 'Republic Bangla',
-        logo: '../public/channel-logos/India/Bengali/republic-bangla.jpg',
+        logo: 'channel-logos/India/Bengali/republic-bangla.jpg',
         title: 'Direct 1080p Full HD Active Stream',
         sub: 'Source: Akamai Syndicate CDN (1920x1080 @ 3.9 Mbps · GPU Hardware Decoded)',
         headline: 'Headline: Fataak News · মমতা বন্দ্যোপাধ্যায়: ২৫ জুলাই সামনে আসছে ক্যাড রিপোর্ট'
@@ -10,7 +10,7 @@ const channels = [
       {
         id: 'abp-ananda',
         name: 'ABP Ananda',
-        logo: '../public/channel-logos/India/Bengali/abp-ananda.png',
+        logo: 'channel-logos/India/Bengali/abp-ananda.png',
         title: 'Official Live Share Embed Widget',
         sub: 'Source: bengali.abplive.com/sharewidget/live-tv.html (1080p HD Container)',
         headline: 'Headline: Aaj Banglay · প্রশ্নপত্রে উত্তাল রাজধানী, রণকৌশল বৈঠকে Rahul-রা'
@@ -18,7 +18,7 @@ const channels = [
       {
         id: 'tv9-bangla',
         name: 'TV9 Bangla',
-        logo: '../public/channel-logos/India/Bengali/tv9-bangla.png',
+        logo: 'channel-logos/India/Bengali/tv9-bangla.png',
         title: 'CloudFront 1080p HLS Feed',
         sub: 'Source: CloudFront Syndicate CDN (1280x720 / 1080p Adaptive Feed)',
         headline: 'Headline: BREAKING · জন্ম-মৃত্যু শংসাপত্রে কারচুপি? | BJP vs TMC SCAM REPORT'
@@ -26,7 +26,7 @@ const channels = [
       {
         id: 'news18-bangla',
         name: 'News18 Bangla',
-        logo: '../public/channel-logos/India/Bengali/news18-bangla.jpg',
+        logo: 'channel-logos/India/Bengali/news18-bangla.jpg',
         title: 'Akamai 1080p HLS Stream',
         sub: 'Source: Akamai Broadpeak Origin Packager (Master HLS Playlist)',
         headline: 'Headline: LIVE · Fake Certificate News | SIR-র সময় প্রায় সাড়ে পনেরো লাখ বার্থ সার্টিফিকেট?'
@@ -34,7 +34,7 @@ const channels = [
       {
         id: 'zee-24-ghanta',
         name: 'Zee 24 Ghanta',
-        logo: '../public/channel-logos/India/Bengali/zee-24-ghanta.png',
+        logo: 'channel-logos/India/Bengali/zee-24-ghanta.png',
         title: 'Official Live Embed Widget',
         sub: 'Source: zeenews.india.com/bengali/live-tv/embed (Official Zee Media Live Widget)',
         headline: 'Headline: NEET Protest · অগ্নিগর্ভ বিহার | দিল্লির সংবাদ | Zee 24 Ghanta Live'
