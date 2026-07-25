@@ -52,10 +52,20 @@ export const getHlsHtml = (rawStreamUrl: string): string => {
                 break;
               default:
                 hls.destroy();
+                if (window.ReactNativeWebView) {
+                  window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'HLS_ERROR', details: data.type }));
+                }
                 break;
             }
           }
         });
+        setTimeout(function() {
+          if (video.paused || video.ended || video.readyState < 2) {
+            if (window.ReactNativeWebView) {
+              window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'HLS_ERROR', details: 'timeout' }));
+            }
+          }
+        }, 6000);
       } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
         video.src = videoSrc;
         video.addEventListener('loadedmetadata', function() {
@@ -229,19 +239,29 @@ export const YOUTUBE_AUTOPLAY_SCRIPT = `
 
       var PLAY_SELECTORS = [
         '.ytp-large-play-button',
-        '.ytp-play-button[aria-label*="Play" i]',
+        '.ytp-play-button',
         'button.ytp-large-play-button',
         '.ytp-cued-thumbnail-overlay-image',
         '.ytp-cued-thumbnail-overlay',
         '[data-layer="4"] .ytp-large-play-button',
-        '.html5-video-player .ytp-large-play-button'
+        '.html5-video-player .ytp-large-play-button',
+        'svg[height="100%"]',
+        'button[aria-label*="Play" i]'
       ];
       for (var s = 0; s < PLAY_SELECTORS.length; s++) {
-        var playBtn = document.querySelector(PLAY_SELECTORS[s]);
-        if (playBtn && playBtn.offsetWidth > 0 && playBtn.offsetHeight > 0) {
-          playBtn.click();
-          break;
-        }
+        try {
+          var playBtns = document.querySelectorAll(PLAY_SELECTORS[s]);
+          for (var b = 0; b < playBtns.length; b++) {
+            var btn = playBtns[b];
+            if (btn) {
+              btn.click();
+              try {
+                var clickEvt = new MouseEvent('click', { bubbles: true, cancelable: true, view: window });
+                btn.dispatchEvent(clickEvt);
+              } catch(evtErr) {}
+            }
+          }
+        } catch(e) {}
       }
 
       var videos = document.querySelectorAll('video');
@@ -289,13 +309,19 @@ export const YOUTUBE_AUTOPLAY_SCRIPT = `
 /** Command injected on D-Pad OK press for Tier 3 YouTube channels */
 export const YOUTUBE_FORCE_PLAY_SCRIPT = `
   (function() {
+    try {
+      if (window.player && typeof window.player.playVideo === 'function') {
+        window.player.playVideo();
+      }
+    } catch(e) {}
+
     var playBtns = document.querySelectorAll(
-      '.ytp-large-play-button, button.ytp-large-play-button, .ytp-play-button, .ytp-cued-thumbnail-overlay'
+      '.ytp-large-play-button, button.ytp-large-play-button, .ytp-play-button, .ytp-cued-thumbnail-overlay, [aria-label*="Play" i], .ytp-button'
     );
     for (var i = 0; i < playBtns.length; i++) {
-      if (playBtns[i].offsetWidth > 0) {
-        playBtns[i].click();
-        break;
+      var btn = playBtns[i];
+      if (btn && (btn.offsetWidth > 0 || btn.offsetHeight > 0)) {
+        btn.click();
       }
     }
 
@@ -308,6 +334,9 @@ export const YOUTUBE_FORCE_PLAY_SCRIPT = `
     try {
       var players = document.querySelectorAll('.html5-video-player');
       for (var p = 0; p < players.length; p++) {
+        if (typeof players[p].playVideo === 'function') {
+          players[p].playVideo();
+        }
         if (typeof players[p].setPlaybackQuality === 'function') {
           players[p].setPlaybackQuality('hd1080');
         }

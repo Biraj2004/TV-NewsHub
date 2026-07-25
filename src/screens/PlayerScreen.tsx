@@ -88,6 +88,19 @@ export function PlayerScreen({ route, navigation }: Props) {
   }, [handleBack]);
 
   const handlePressScreen = useCallback(() => {
+    if (hasPrimaryDirectSource && currentChannel.embedUrl) {
+      embedWebViewRef.current?.injectJavaScript(EMBED_FORCE_PLAY_SCRIPT);
+    } else if (!hasPrimaryDirectSource) {
+      ytPlayerRef.current?.forcePlay();
+      if (!isPlaying) {
+        setIsPlaying(true);
+      }
+      if (!isVisible) {
+        showOverlay();
+      }
+      return;
+    }
+
     if (!isPlaying) {
       setIsPlaying(true);
     } else {
@@ -97,7 +110,7 @@ export function PlayerScreen({ route, navigation }: Props) {
         showOverlay();
       }
     }
-  }, [isPlaying, isVisible, showOverlay]);
+  }, [hasPrimaryDirectSource, currentChannel, isPlaying, isVisible, showOverlay]);
 
   // TV Remote: OK plays/pauses or shows controls; DOWN shows controls; UP hides controls; LEFT/RIGHT switches channel
   useTVEventHandler((event) => {
@@ -167,6 +180,14 @@ export function PlayerScreen({ route, navigation }: Props) {
             showsHorizontalScrollIndicator={false}
             showsVerticalScrollIndicator={false}
             onError={() => handlePrimaryStreamError('HLS stream loading error.')}
+            onMessage={(event) => {
+              try {
+                const data = JSON.parse(event.nativeEvent.data);
+                if (data && data.type === 'HLS_ERROR') {
+                  handlePrimaryStreamError('HLS stream offline.');
+                }
+              } catch {}
+            }}
           />
         ) : hasPrimaryDirectSource && currentChannel.embedUrl ? (
           /* Tier 2: Official Channel Web Embed */
@@ -198,6 +219,7 @@ export function PlayerScreen({ route, navigation }: Props) {
             play={isPlaying}
             videoId={videoId}
             mute={false}
+            forceAndroidAutoplay={true}
             onChangeState={onPlayerStateChange}
             onError={onPlayerError}
             playList={undefined}
@@ -208,6 +230,7 @@ export function PlayerScreen({ route, navigation }: Props) {
               rel: false,
               preventFullScreen: true,
               autoplay: 1,
+              origin: 'https://www.youtube.com',
             } as any}
           />
         ) : (

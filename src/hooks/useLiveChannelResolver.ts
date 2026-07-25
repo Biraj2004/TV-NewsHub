@@ -99,9 +99,10 @@ export function useLiveChannelResolver(youtubeChannelId: string | null): LiveCha
         );
 
         if (liveResponse.ok) {
+          const redirectMatch = liveResponse.url.match(/(?:watch\?v=|\/embed\/|\/v\/)([a-zA-Z0-9_-]{11})/);
           const html = await liveResponse.text();
 
-          // Extract program title — more resilient multi-pattern approach
+          // Extract program title — resilient multi-pattern approach
           let title: string | null = null;
           const titlePatterns = [
             // videoDetails object title
@@ -119,8 +120,16 @@ export function useLiveChannelResolver(youtubeChannelId: string | null): LiveCha
             }
           }
 
-          // Check pattern 1: Canonical watch URL
-          const canonicalMatch = html.match(/<link rel="canonical" href="https:\/\/www\.youtube\.com\/watch\?v=([a-zA-Z0-9_-]{11})">/);
+          // Check pattern 0: Final response URL (if redirected to watch?v=)
+          if (redirectMatch?.[1]) {
+            const result: CacheEntry = { videoId: redirectMatch[1], videoTitle: title, isError: false, fetchedAt: Date.now() };
+            resolverCache.set(youtubeChannelId, result);
+            if (isMounted) { setVideoId(result.videoId); setVideoTitle(result.videoTitle); setIsLoading(false); }
+            return;
+          }
+
+          // Check pattern 1: Canonical or og:url watch URL
+          const canonicalMatch = html.match(/(?:<link rel="canonical" href="|<meta property="og:url" content=")https:\/\/www\.youtube\.com\/watch\?v=([a-zA-Z0-9_-]{11})"/);
           if (canonicalMatch?.[1]) {
             const result: CacheEntry = { videoId: canonicalMatch[1], videoTitle: title, isError: false, fetchedAt: Date.now() };
             resolverCache.set(youtubeChannelId, result);
@@ -137,10 +146,19 @@ export function useLiveChannelResolver(youtubeChannelId: string | null): LiveCha
             return;
           }
 
-          // Check pattern 3: liveStreamabilityRenderer
-          const streamabilityMatch = html.match(/"liveStreamabilityRenderer"[^}]{0,300}?"videoId"\s*:\s*"([a-zA-Z0-9_-]{11})"/);
+          // Check pattern 3: liveStreamabilityRenderer or videoId in ytInitialData
+          const streamabilityMatch = html.match(/(?:"liveStreamabilityRenderer"|"videoDetails")[^}]{0,300}?"videoId"\s*:\s*"([a-zA-Z0-9_-]{11})"/);
           if (streamabilityMatch?.[1]) {
             const result: CacheEntry = { videoId: streamabilityMatch[1], videoTitle: title, isError: false, fetchedAt: Date.now() };
+            resolverCache.set(youtubeChannelId, result);
+            if (isMounted) { setVideoId(result.videoId); setVideoTitle(result.videoTitle); setIsLoading(false); }
+            return;
+          }
+
+          // Check pattern 4: General watch?v= match fallback in page HTML
+          const watchMatch = html.match(/\/watch\?v=([a-zA-Z0-9_-]{11})/);
+          if (watchMatch?.[1]) {
+            const result: CacheEntry = { videoId: watchMatch[1], videoTitle: title, isError: false, fetchedAt: Date.now() };
             resolverCache.set(youtubeChannelId, result);
             if (isMounted) { setVideoId(result.videoId); setVideoTitle(result.videoTitle); setIsLoading(false); }
             return;

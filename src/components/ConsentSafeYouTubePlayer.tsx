@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
-import { View, ActivityIndicator } from 'react-native';
+import { View, ActivityIndicator, StyleSheet } from 'react-native';
 import YoutubePlayer, { YoutubeIframeProps, YoutubeIframeRef } from 'react-native-youtube-iframe';
 import CookieManager from '@react-native-cookies/cookies';
 import { YOUTUBE_AUTOPLAY_SCRIPT, YOUTUBE_FORCE_PLAY_SCRIPT } from '../utils/playerScripts';
@@ -15,20 +15,35 @@ export interface ConsentSafeYouTubePlayerRef {
 }
 
 export const ConsentSafeYouTubePlayer = forwardRef<ConsentSafeYouTubePlayerRef, YoutubeIframeProps>(
-  function ConsentSafeYouTubePlayer(props, ref) {
+  function ConsentSafeYouTubePlayerInner(props, ref) {
     const [cookiesReady, setCookiesReady] = useState(isConsentCookieSet);
     const playerRef = useRef<YoutubeIframeRef>(null);
+
+    // Safe JS Injection helper — prevents TypeError: undefined is not a function crashes
+    const safeInjectJS = (script: string) => {
+      try {
+        const p: any = playerRef.current;
+        if (p && typeof p.injectJavaScript === 'function') {
+          p.injectJavaScript(script);
+        } else if (p && p.webViewRef && typeof p.webViewRef.current?.injectJavaScript === 'function') {
+          p.webViewRef.current.injectJavaScript(script);
+        }
+      } catch (err) {
+        if (__DEV__) { console.warn('[ConsentSafeYouTubePlayer] JS injection skipped:', err); }
+      }
+    };
 
     // Expose forcePlay() and injectWebViewJavaScript() to parent via ref
     useImperativeHandle(ref, () => ({
       injectWebViewJavaScript: (js: string) => {
-        (playerRef.current as any)?.injectWebViewJavaScript(js);
+        safeInjectJS(js);
       },
       forcePlay: () => {
-        (playerRef.current as any)?.injectWebViewJavaScript(YOUTUBE_FORCE_PLAY_SCRIPT);
+        safeInjectJS(YOUTUBE_FORCE_PLAY_SCRIPT);
       },
     }));
 
+    // Layer 1: Inject Consent Cookies for YouTube & Google domains
     useEffect(() => {
       if (isConsentCookieSet) {
         setCookiesReady(true);
@@ -72,9 +87,19 @@ export const ConsentSafeYouTubePlayer = forwardRef<ConsentSafeYouTubePlayerRef, 
       setConsentCookies();
     }, []);
 
+    // Auto-trigger forcePlay when props.play is active and cookies are ready (declared BEFORE early returns)
+    useEffect(() => {
+      if (props.play && cookiesReady) {
+        const timer = setTimeout(() => {
+          safeInjectJS(YOUTUBE_FORCE_PLAY_SCRIPT);
+        }, 500);
+        return () => clearTimeout(timer);
+      }
+    }, [props.play, cookiesReady]);
+
     if (!cookiesReady) {
       return (
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#000000' }}>
+        <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color="#ffffff" />
         </View>
       );
@@ -82,7 +107,7 @@ export const ConsentSafeYouTubePlayer = forwardRef<ConsentSafeYouTubePlayerRef, 
 
     const handleReady = () => {
       // Trigger immediate forcePlay on player ready callback
-      (playerRef.current as any)?.injectWebViewJavaScript(YOUTUBE_FORCE_PLAY_SCRIPT);
+      safeInjectJS(YOUTUBE_FORCE_PLAY_SCRIPT);
       if (props.onReady) {
         props.onReady();
       }
@@ -90,6 +115,7 @@ export const ConsentSafeYouTubePlayer = forwardRef<ConsentSafeYouTubePlayerRef, 
 
     const customWebViewProps = {
       ...(props.webViewProps || {}),
+      baseUrl: 'https://www.youtube.com',
       mediaPlaybackRequiresUserAction: false,
       allowsInlineMediaPlayback: true,
       androidLayerType: 'hardware',
@@ -102,7 +128,7 @@ export const ConsentSafeYouTubePlayer = forwardRef<ConsentSafeYouTubePlayerRef, 
         if (props.webViewProps && props.webViewProps.onNavigationStateChange) {
           props.webViewProps.onNavigationStateChange(navState);
         }
-      }
+      },
     };
 
     return (
@@ -115,5 +141,14 @@ export const ConsentSafeYouTubePlayer = forwardRef<ConsentSafeYouTubePlayerRef, 
     );
   }
 );
+
+const styles = StyleSheet.create({
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#000000',
+  },
+});
 
 export default ConsentSafeYouTubePlayer;
