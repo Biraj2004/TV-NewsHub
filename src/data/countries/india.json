@@ -15,7 +15,7 @@
     "country": "India",
     "logo": "",
     "youtubeChannelId": "UCv3rFzn-GHGtqzXiaq3sWNg",
-    "streamUrl": "https://d3pnfn2zxtq6km.cloudfront.net/out/v1/c77a35d9d4f74371a3cf0f214a9eb8c0/index.m3u8"
+    "streamUrl": "https://abplivetv.akamaized.net/hls/live/2043012/ananda/master.m3u8"
   },
   {
     "id": "tv9-bangla",
@@ -41,8 +41,8 @@
     "language": "Bengali",
     "country": "India",
     "logo": "",
-    "youtubeChannelId": "UClJ9N3l2S9XqYj_yE8g9v4Q",
-    "streamUrl": "https://d39iawgzv3h0yo.cloudfront.net/out/v1/1ef4344a3b4a41908915d58ac7bd5e23/index.m3u8"
+    "youtubeChannelId": "UCJ3I6MHOz5exARlTW_meOGQ",
+    "streamUrl": "https://akdnetwork.co.in/live/cnnews/index.m3u8"
   },
   {
     "id": "zee-24-ghanta",
