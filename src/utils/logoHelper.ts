@@ -1,10 +1,11 @@
 export const localLogos: { [key: string]: any } = {
   // India Bengali
   'abp-ananda': require('../../public/channel-logos/India/Bengali/abp-ananda.png'),
-  'zee-24-ghanta': require('../../public/channel-logos/India/Bengali/zee-24-ghanta.png'),
   'news18-bangla': require('../../public/channel-logos/India/Bengali/news18-bangla.jpg'),
   'republic-bangla': require('../../public/channel-logos/India/Bengali/republic-bangla.jpg'),
   'tv9-bangla': require('../../public/channel-logos/India/Bengali/tv9-bangla.png'),
+  'calcutta-news': require('../../public/channel-logos/India/Bengali/calcutta_news.webp'),
+  'zee-24-ghanta': require('../../public/channel-logos/India/Bengali/zee-24-ghanta.png'),
 
   // India Hindi
   'ndtv-india': require('../../public/channel-logos/India/Hindi/ndtv-india.png'),

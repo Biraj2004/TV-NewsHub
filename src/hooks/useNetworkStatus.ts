@@ -8,7 +8,6 @@ async function verifyActiveInternet(timeoutMs = 3000): Promise<boolean> {
     const timer = setTimeout(() => controller.abort(), timeoutMs);
     const res = await fetch('https://clients3.google.com/generate_204', {
       method: 'HEAD',
-      cache: 'no-cache',
       signal: controller.signal,
     });
     clearTimeout(timer);

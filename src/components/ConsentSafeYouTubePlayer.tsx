@@ -1,131 +1,119 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
 import { View, ActivityIndicator } from 'react-native';
-import YoutubePlayer, { YoutubeIframeProps } from 'react-native-youtube-iframe';
+import YoutubePlayer, { YoutubeIframeProps, YoutubeIframeRef } from 'react-native-youtube-iframe';
 import CookieManager from '@react-native-cookies/cookies';
+import { YOUTUBE_AUTOPLAY_SCRIPT, YOUTUBE_FORCE_PLAY_SCRIPT } from '../utils/playerScripts';
 
 let isConsentCookieSet = false;
 
-export function ConsentSafeYouTubePlayer(props: YoutubeIframeProps) {
-  const [cookiesReady, setCookiesReady] = useState(isConsentCookieSet);
+/** Methods exposed to parent via ref */
+export interface ConsentSafeYouTubePlayerRef {
+  /** Inject arbitrary JS into the YouTube WebView page context */
+  injectWebViewJavaScript: (js: string) => void;
+  /** Force the video to play immediately — clicks red play button + calls video.play() */
+  forcePlay: () => void;
+}
 
-  useEffect(() => {
-    if (isConsentCookieSet) {
-      setCookiesReady(true);
-      return;
+export const ConsentSafeYouTubePlayer = forwardRef<ConsentSafeYouTubePlayerRef, YoutubeIframeProps>(
+  function ConsentSafeYouTubePlayer(props, ref) {
+    const [cookiesReady, setCookiesReady] = useState(isConsentCookieSet);
+    const playerRef = useRef<YoutubeIframeRef>(null);
+
+    // Expose forcePlay() and injectWebViewJavaScript() to parent via ref
+    useImperativeHandle(ref, () => ({
+      injectWebViewJavaScript: (js: string) => {
+        (playerRef.current as any)?.injectWebViewJavaScript(js);
+      },
+      forcePlay: () => {
+        (playerRef.current as any)?.injectWebViewJavaScript(YOUTUBE_FORCE_PLAY_SCRIPT);
+      },
+    }));
+
+    useEffect(() => {
+      if (isConsentCookieSet) {
+        setCookiesReady(true);
+        return;
+      }
+
+      const setConsentCookies = async () => {
+        try {
+          if (__DEV__) { console.log('[ConsentSafeYouTubePlayer] Setting Layer 1 Consent Cookies...'); }
+
+          const expiryDate = new Date();
+          expiryDate.setFullYear(expiryDate.getFullYear() + 5);
+          const expiryStr = expiryDate.toISOString();
+
+          await CookieManager.set('https://google.com', {
+            name: 'CONSENT',
+            value: 'YES+',
+            domain: '.google.com',
+            path: '/',
+            expires: expiryStr,
+          });
+
+          await CookieManager.set('https://youtube.com', {
+            name: 'CONSENT',
+            value: 'YES+',
+            domain: '.youtube.com',
+            path: '/',
+            expires: expiryStr,
+          });
+
+          if (__DEV__) { console.log('[ConsentSafeYouTubePlayer] Layer 1 Consent Cookies successfully set!'); }
+          isConsentCookieSet = true;
+          setCookiesReady(true);
+        } catch (err) {
+          console.warn('[ConsentSafeYouTubePlayer] Failed to set Layer 1 Consent Cookies:', err);
+          isConsentCookieSet = true;
+          setCookiesReady(true);
+        }
+      };
+
+      setConsentCookies();
+    }, []);
+
+    if (!cookiesReady) {
+      return (
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#000000' }}>
+          <ActivityIndicator size="large" color="#ffffff" />
+        </View>
+      );
     }
 
-    const setConsentCookies = async () => {
-      try {
-        if (__DEV__) { console.log('[ConsentSafeYouTubePlayer] Setting Layer 1 Consent Cookies...'); }
-        
-        const expiryDate = new Date();
-        expiryDate.setFullYear(expiryDate.getFullYear() + 5);
-        const expiryStr = expiryDate.toISOString();
-
-        await CookieManager.set('https://google.com', {
-          name: 'CONSENT',
-          value: 'YES+',
-          domain: '.google.com',
-          path: '/',
-          expires: expiryStr,
-        });
-
-        await CookieManager.set('https://youtube.com', {
-          name: 'CONSENT',
-          value: 'YES+',
-          domain: '.youtube.com',
-          path: '/',
-          expires: expiryStr,
-        });
-
-        if (__DEV__) { console.log('[ConsentSafeYouTubePlayer] Layer 1 Consent Cookies successfully set!'); }
-        isConsentCookieSet = true;
-        setCookiesReady(true);
-      } catch (err) {
-        console.warn('[ConsentSafeYouTubePlayer] Failed to set Layer 1 Consent Cookies:', err);
-        isConsentCookieSet = true;
-        setCookiesReady(true);
+    const handleReady = () => {
+      // Trigger immediate forcePlay on player ready callback
+      (playerRef.current as any)?.injectWebViewJavaScript(YOUTUBE_FORCE_PLAY_SCRIPT);
+      if (props.onReady) {
+        props.onReady();
       }
     };
 
-    setConsentCookies();
-  }, []);
-
-  const layer2Script = `
-    (function() {
-      var startTime = Date.now();
-      var interval = setInterval(function() {
-        if (Date.now() - startTime > 10000) {
-          clearInterval(interval);
-          return;
+    const customWebViewProps = {
+      ...(props.webViewProps || {}),
+      mediaPlaybackRequiresUserAction: false,
+      allowsInlineMediaPlayback: true,
+      androidLayerType: 'hardware',
+      // Layer 2: Runs inside YouTube WebView page — full DOM access, no cross-origin block
+      injectedJavaScript: YOUTUBE_AUTOPLAY_SCRIPT,
+      onNavigationStateChange: (navState: any) => {
+        if (navState.url && navState.url.includes('consentsafe-layer2-fired')) {
+          if (__DEV__) { console.log('[ConsentSafeYouTubePlayer] DEV ONLY: Layer 2 consent dismiss fired!'); }
         }
-
-        // 1. Auto dismiss consent popups
-        var selectors = [
-          'button[aria-label*="Accept" i]',
-          'button[aria-label*="Agree" i]',
-          'button[aria-label*="Consent" i]',
-          '.eom-buttonrow button',
-          'form[action*="consent"] button',
-          'form[action*="consent"] input[type="submit"]',
-          '#introAgreeButton',
-          '#accept-choices'
-        ];
-        for (var i = 0; i < selectors.length; i++) {
-          var btn = document.querySelector(selectors[i]);
-          if (btn) {
-            btn.click();
-            window.location.hash = 'consentsafe-layer2-fired';
-            break;
-          }
+        if (props.webViewProps && props.webViewProps.onNavigationStateChange) {
+          props.webViewProps.onNavigationStateChange(navState);
         }
+      }
+    };
 
-        // 2. Auto click YouTube big red play button if present
-        var playBtn = document.querySelector('.ytp-large-play-button, .ytp-play-button');
-        if (playBtn && playBtn.offsetWidth > 0 && playBtn.offsetHeight > 0) {
-          playBtn.click();
-        }
-
-        // 3. Ensure HTML5 video element is playing
-        var v = document.querySelector('video');
-        if (v && v.paused) {
-          v.play().catch(function(){});
-        }
-      }, 300);
-    })();
-    true;
-  `;
-
-  if (!cookiesReady) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#000000' }}>
-        <ActivityIndicator size="large" color="#ffffff" />
-      </View>
+      <YoutubePlayer
+        ref={playerRef}
+        {...props}
+        onReady={handleReady}
+        webViewProps={customWebViewProps as any}
+      />
     );
   }
-
-  const customWebViewProps = {
-    ...(props.webViewProps || {}),
-    mediaPlaybackRequiresUserAction: false,
-    allowsInlineMediaPlayback: true,
-    androidLayerType: 'hardware',
-    injectedJavaScript: layer2Script,
-    onNavigationStateChange: (navState: any) => {
-      if (navState.url && navState.url.includes('consentsafe-layer2-fired')) {
-        if (__DEV__) { console.log('[ConsentSafeYouTubePlayer] DEV ONLY: Layer 2 (fallback) consent dialog dismiss fired!'); }
-      }
-      if (props.webViewProps && props.webViewProps.onNavigationStateChange) {
-        props.webViewProps.onNavigationStateChange(navState);
-      }
-    }
-  };
-
-  return (
-    <YoutubePlayer
-      {...props}
-      webViewProps={customWebViewProps as any}
-    />
-  );
-}
+);
 
 export default ConsentSafeYouTubePlayer;
