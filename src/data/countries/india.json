@@ -15,7 +15,7 @@
     "country": "India",
     "logo": "",
     "youtubeChannelId": "UCv3rFzn-GHGtqzXiaq3sWNg",
-    "embedUrl": "https://bengali.abplive.com/sharewidget/live-tv.html"
+    "streamUrl": "https://d3pnfn2zxtq6km.cloudfront.net/out/v1/c77a35d9d4f74371a3cf0f214a9eb8c0/index.m3u8"
   },
   {
     "id": "tv9-bangla",
@@ -36,13 +36,22 @@
     "streamUrl": "https://n18syndication.akamaized.net/bpk-tv/News18_Bangla_NW18_MOB/output01/master.m3u8"
   },
   {
+    "id": "calcutta-news",
+    "name": "Calcutta News",
+    "language": "Bengali",
+    "country": "India",
+    "logo": "",
+    "youtubeChannelId": "UClJ9N3l2S9XqYj_yE8g9v4Q",
+    "streamUrl": "https://d39iawgzv3h0yo.cloudfront.net/out/v1/1ef4344a3b4a41908915d58ac7bd5e23/index.m3u8"
+  },
+  {
     "id": "zee-24-ghanta",
     "name": "Zee 24 Ghanta",
     "language": "Bengali",
     "country": "India",
     "logo": "",
     "youtubeChannelId": "UCdF5Q5QVbYstYrTfpgUl0ZA",
-    "embedUrl": "https://zeenews.india.com/bengali/live-tv/embed"
+    "embedUrl": "https://zeenews.india.com/bengali/news/live-tv?videoId=zee_24ghanta&autoplay=1"
   },
   {
     "id": "ndtv-india",
