@@ -10,7 +10,8 @@ import channelsData from '../data/channels';
 import { BrandLogo } from '../components/BrandLogo';
 import { NoInternetScreen } from '../components/NoInternetScreen';
 import { EmptyState } from '../components/EmptyState';
-import { DegradedStatusBanner } from '../components/DegradedStatusBanner';
+import { HomeNotificationBar } from '../components/HomeNotificationBar';
+import { checkForAppUpdates, UpdateResult } from '../utils/updateChecker';
 import { useNetworkStatus } from '../hooks/useNetworkStatus';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Home'>;
@@ -111,10 +112,25 @@ let globalHasProcessAutoLaunched = false;
 
 export function HomeScreen({ navigation, route }: Props) {
   const isConnected = useNetworkStatus();
+  const [updateInfo, setUpdateInfo] = useState<UpdateResult | null>(null);
+  const [isUpdateDismissed, setIsUpdateDismissed] = useState<boolean>(false);
   const [isLiveCheckDegraded, setIsLiveCheckDegraded] = useState<boolean>(false);
   const [timeStr, setTimeStr] = useState<string>('');
   const [lastWatchedName, setLastWatchedName] = useState<string>('None');
   const [checkedAutoLaunch, setCheckedAutoLaunch] = useState<boolean>(false);
+
+  // Check for app updates silently on load
+  useEffect(() => {
+    let isMounted = true;
+    checkForAppUpdates('0.0.2').then((result) => {
+      if (isMounted && result && result.hasUpdate) {
+        setUpdateInfo(result);
+      }
+    });
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const [selectedCountry, setSelectedCountry] = useState<string>('India');
   const [selectedLanguage, setSelectedLanguage] = useState<string>('All');
@@ -347,8 +363,13 @@ export function HomeScreen({ navigation, route }: Props) {
           </View>
         </View>
 
-        {/* Degraded Status Banner */}
-        {isLiveCheckDegraded && <DegradedStatusBanner />}
+        {/* Unified Home Notification Bar (Priority Stacked: Update Banner > Live Status Pill) */}
+        <HomeNotificationBar
+          updateInfo={updateInfo}
+          isUpdateDismissed={isUpdateDismissed}
+          onDismissUpdate={() => setIsUpdateDismissed(true)}
+          isLiveStatusDegraded={isLiveCheckDegraded}
+        />
 
         {/* Country Row */}
         <View style={styles.tabsWrapper}>
