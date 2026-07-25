@@ -95,6 +95,45 @@ const getEmbedHtml = (rawEmbedUrl: string) => {
   </head>
   <body>
     <iframe src="${embedUrl}" frameborder="0" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen style="width:100vw; height:100vh;"></iframe>
+    <script>
+      (function() {
+        var startTime = Date.now();
+        var interval = setInterval(function() {
+          if (Date.now() - startTime > 15000) {
+            clearInterval(interval);
+            return;
+          }
+          try {
+            var iframe = document.querySelector('iframe');
+            if (iframe && iframe.contentWindow) {
+              var doc = iframe.contentWindow.document;
+              if (doc) {
+                var playBtns = doc.querySelectorAll('.vjs-big-play-button, .play-button, .play-icon, .play_btn, button, .ytp-large-play-button');
+                for (var i = 0; i < playBtns.length; i++) {
+                  if (playBtns[i] && playBtns[i].offsetWidth > 0) {
+                    playBtns[i].click();
+                  }
+                }
+                var v = doc.querySelector('video');
+                if (v && v.paused) {
+                  v.muted = false;
+                  v.play().catch(function(){});
+                }
+              }
+            }
+          } catch (e) {}
+
+          try {
+            var outerVideos = document.querySelectorAll('video');
+            for (var j = 0; j < outerVideos.length; j++) {
+              if (outerVideos[j].paused) {
+                outerVideos[j].play().catch(function(){});
+              }
+            }
+          } catch(e) {}
+        }, 300);
+      })();
+    </script>
   </body>
   </html>
 `;
@@ -151,7 +190,19 @@ export function PlayerScreen({ route, navigation }: Props) {
     return () => backHandler.remove();
   }, [handleBack]);
 
-  // TV Remote: OK plays/pauses; DOWN shows controls; UP hides controls; LEFT/RIGHT switches channel
+  const handlePressScreen = useCallback(() => {
+    if (!isPlaying) {
+      setIsPlaying(true);
+    } else {
+      if (isVisible) {
+        setIsPlaying((prev) => !prev);
+      } else {
+        showOverlay();
+      }
+    }
+  }, [isPlaying, isVisible, showOverlay]);
+
+  // TV Remote: OK plays/pauses or shows controls; DOWN shows controls; UP hides controls; LEFT/RIGHT switches channel
   useTVEventHandler((event) => {
     if (!event) return;
     const { eventType } = event;
@@ -165,8 +216,7 @@ export function PlayerScreen({ route, navigation }: Props) {
     } else if (eventType === 'up' || eventType === 'dpadUp') {
       hideOverlay();
     } else if (eventType === 'select' || eventType === 'dpadCenter' || eventType === 'playPause') {
-      setIsPlaying((prev) => !prev);
-      showOverlay();
+      handlePressScreen();
     }
   });
 
@@ -272,7 +322,7 @@ export function PlayerScreen({ route, navigation }: Props) {
       {/* Focus Grabber Overlay to retain TV Focus in React Native */}
       <Pressable
         hasTVPreferredFocus={true}
-        onPress={showOverlay}
+        onPress={handlePressScreen}
         style={styles.focusGrabber}
       />
 

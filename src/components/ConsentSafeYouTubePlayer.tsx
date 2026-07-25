@@ -19,10 +19,9 @@ export function ConsentSafeYouTubePlayer(props: YoutubeIframeProps) {
         if (__DEV__) { console.log('[ConsentSafeYouTubePlayer] Setting Layer 1 Consent Cookies...'); }
         
         const expiryDate = new Date();
-        expiryDate.setFullYear(expiryDate.getFullYear() + 5); // 5 years expiry
+        expiryDate.setFullYear(expiryDate.getFullYear() + 5);
         const expiryStr = expiryDate.toISOString();
 
-        // Set consent cookie YES+ for .google.com
         await CookieManager.set('https://google.com', {
           name: 'CONSENT',
           value: 'YES+',
@@ -31,7 +30,6 @@ export function ConsentSafeYouTubePlayer(props: YoutubeIframeProps) {
           expires: expiryStr,
         });
 
-        // Set consent cookie YES+ for .youtube.com
         await CookieManager.set('https://youtube.com', {
           name: 'CONSENT',
           value: 'YES+',
@@ -45,7 +43,6 @@ export function ConsentSafeYouTubePlayer(props: YoutubeIframeProps) {
         setCookiesReady(true);
       } catch (err) {
         console.warn('[ConsentSafeYouTubePlayer] Failed to set Layer 1 Consent Cookies:', err);
-        // Continue loading player anyway as fallback
         isConsentCookieSet = true;
         setCookiesReady(true);
       }
@@ -58,10 +55,12 @@ export function ConsentSafeYouTubePlayer(props: YoutubeIframeProps) {
     (function() {
       var startTime = Date.now();
       var interval = setInterval(function() {
-        if (Date.now() - startTime > 5000) {
+        if (Date.now() - startTime > 10000) {
           clearInterval(interval);
           return;
         }
+
+        // 1. Auto dismiss consent popups
         var selectors = [
           'button[aria-label*="Accept" i]',
           'button[aria-label*="Agree" i]',
@@ -77,23 +76,22 @@ export function ConsentSafeYouTubePlayer(props: YoutubeIframeProps) {
           if (btn) {
             btn.click();
             window.location.hash = 'consentsafe-layer2-fired';
-            clearInterval(interval);
-            return;
+            break;
           }
         }
-        
-        // Dynamic search by text content
-        var buttons = document.querySelectorAll('button');
-        for (var j = 0; j < buttons.length; j++) {
-          var text = buttons[j].textContent || buttons[j].innerText || '';
-          if (/accept|agree|consent|allow/i.test(text)) {
-            buttons[j].click();
-            window.location.hash = 'consentsafe-layer2-fired';
-            clearInterval(interval);
-            return;
-          }
+
+        // 2. Auto click YouTube big red play button if present
+        var playBtn = document.querySelector('.ytp-large-play-button, .ytp-play-button');
+        if (playBtn && playBtn.offsetWidth > 0 && playBtn.offsetHeight > 0) {
+          playBtn.click();
         }
-      }, 250);
+
+        // 3. Ensure HTML5 video element is playing
+        var v = document.querySelector('video');
+        if (v && v.paused) {
+          v.play().catch(function(){});
+        }
+      }, 300);
     })();
     true;
   `;
@@ -108,6 +106,9 @@ export function ConsentSafeYouTubePlayer(props: YoutubeIframeProps) {
 
   const customWebViewProps = {
     ...(props.webViewProps || {}),
+    mediaPlaybackRequiresUserAction: false,
+    allowsInlineMediaPlayback: true,
+    androidLayerType: 'hardware',
     injectedJavaScript: layer2Script,
     onNavigationStateChange: (navState: any) => {
       if (navState.url && navState.url.includes('consentsafe-layer2-fired')) {
@@ -122,8 +123,9 @@ export function ConsentSafeYouTubePlayer(props: YoutubeIframeProps) {
   return (
     <YoutubePlayer
       {...props}
-      webViewProps={customWebViewProps}
+      webViewProps={customWebViewProps as any}
     />
   );
 }
+
 export default ConsentSafeYouTubePlayer;

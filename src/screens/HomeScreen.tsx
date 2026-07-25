@@ -122,7 +122,7 @@ export function HomeScreen({ navigation, route }: Props) {
   // Check for app updates silently on load
   useEffect(() => {
     let isMounted = true;
-    checkForAppUpdates('0.0.2').then((result) => {
+    checkForAppUpdates('0.0.3').then((result) => {
       if (isMounted && result && result.hasUpdate) {
         setUpdateInfo(result);
       }
