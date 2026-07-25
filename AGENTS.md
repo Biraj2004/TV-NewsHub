@@ -11,6 +11,7 @@
 ## 📌 Critical Directives & Rules for AI Coding Agents
 
 ### 1. APK Export Naming Convention
+
 Whenever building release APKs (`gradlew assembleRelease`), **ALWAYS** copy the generated APK files from `android/app/build/outputs/apk/release/` into the `APK Export/` folder using the exact proper app name and version format:
 
 ```text
@@ -27,6 +28,7 @@ APK Export/
 > ⚠️ **Rule**: Never leave generic filenames like `app-release.apk` or `app-universal-release.apk` in the root export folder. Always prepend `TV-NewsHub-v<Version>-<arch>.apk`.
 
 ### 2. Virtual Emulator Boot & ADB Commands (Windows CMD)
+
 When starting or deploying onto a virtual Android TV emulator, **ALWAYS** use Command Prompt (`cmd`) `start` commands so the GUI window launches in the foreground:
 
 ```cmd
@@ -46,7 +48,7 @@ adb -s emulator-5554 install -r "APK Export/TV-NewsHub-v0.0.3-universal.apk"
 adb -s emulator-5554 install -r "APK Export/Cobalt-v2.0.2-arm.apk"
 
 :: 6. Launch TV-NewsHub Package
-adb -s emulator-5554 shell am start -n com.tempnewshub/.MainActivity
+adb -s emulator-5554 shell am start -n com.tvnewshub/.MainActivity
 
 :: 7. Launch Cobalt Package
 adb -s emulator-5554 shell monkey -p io.gh.reisxd.tizentube.cobalt 1
@@ -67,7 +69,8 @@ flowchart TD
     D -- No --> F[Tier 3: YouTube Live Resolver (ConsentSafeYouTubePlayer)]
 ```
 
-### Stream Tier Hierarchy Details:
+### Stream Tier Hierarchy Details
+
 1. **Tier 1 (`streamUrl`)**: Direct Akamai / CloudFront HLS `.m3u8` master playlists (1080p Full HD @ 3.9 Mbps). Rendered using an HTML5 `<video>` player container with `Hls.js` inside `react-native-webview` for GPU hardware decoding.
 2. **Tier 2 (`embedUrl`)**: Official broadcaster web player share widgets (e.g. `bengali.abplive.com/sharewidget/live-tv.html`). Rendered in isolated WebView containers.
 3. **Tier 3 (`youtubeChannelId`)**: Desktop User-Agent YouTube Live Canonical Resolver fallback with real-time news title extraction.
@@ -92,8 +95,11 @@ All 5 primary Bengali news channels are configured in [`src/data/countries/india
 
 1. **Focus & Zoom Engine**:
    * All channel tiles, country chips, and language filter tabs scale up by `1.05x` and display a bold `#ffffff` border on focus.
-2. **D-Pad Zapping**:
-   * Pressing **LEFT / RIGHT D-Pad** keys while playing a channel instantly hops to the previous/next channel in the active list.
+2. **D-Pad Controls & Zapping**:
+   * **OK / Center**: Plays or pauses the video feed / YouTube live stream.
+   * **DOWN D-Pad**: Displays the translucent player controls overlay.
+   * **UP D-Pad**: Hides/dismisses the player controls overlay.
+   * **LEFT / RIGHT D-Pad**: Instantly hops to the previous/next channel in the active list.
 3. **Overlay & Timeout**:
    * Translucent player overlay automatically fades out after 4 seconds of inactivity. Pressing any D-Pad key fades it back in.
 4. **Cookie Consent Auto-Dismiss**:

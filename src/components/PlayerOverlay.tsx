@@ -153,7 +153,7 @@ export function PlayerOverlay({
         </View>
 
         <Text style={styles.helpText}>
-          {'‹ ›  Switch channel  ·  OK  Show controls  ·  ✕  Back to grid'}
+          {'‹ ›  Switch channel  ·  OK  Play/Pause  ·  ↓  Controls  ·  ↑  Hide'}
         </Text>
       </View>
     </Animated.View>

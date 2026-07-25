@@ -151,17 +151,21 @@ export function PlayerScreen({ route, navigation }: Props) {
     return () => backHandler.remove();
   }, [handleBack]);
 
-  // TV Remote: show overlay on select/center; navigate channels on left/right
+  // TV Remote: OK plays/pauses; DOWN shows controls; UP hides controls; LEFT/RIGHT switches channel
   useTVEventHandler((event) => {
     if (!event) return;
-    if (event.eventType === 'left' || event.eventType === 'dpadLeft') {
+    const { eventType } = event;
+
+    if (eventType === 'left' || eventType === 'dpadLeft') {
       handlePrevChannel();
-    } else if (event.eventType === 'right' || event.eventType === 'dpadRight') {
+    } else if (eventType === 'right' || eventType === 'dpadRight') {
       handleNextChannel();
-    } else if (event.eventType === 'playPause') {
-      setIsPlaying((prev) => !prev);
+    } else if (eventType === 'down' || eventType === 'dpadDown') {
       showOverlay();
-    } else if (event.eventType === 'select' || event.eventType === 'dpadCenter') {
+    } else if (eventType === 'up' || eventType === 'dpadUp') {
+      hideOverlay();
+    } else if (eventType === 'select' || eventType === 'dpadCenter' || eventType === 'playPause') {
+      setIsPlaying((prev) => !prev);
       showOverlay();
     }
   });
@@ -248,6 +252,7 @@ export function PlayerScreen({ route, navigation }: Props) {
               modestbranding: 1,
               rel: false,
               preventFullScreen: true,
+              autoplay: 1,
             } as any}
           />
         ) : (

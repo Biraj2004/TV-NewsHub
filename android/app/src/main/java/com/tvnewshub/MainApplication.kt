@@ -1,4 +1,4 @@
-package com.tempnewshub
+package com.tvnewshub
 
 import android.app.Application
 import com.facebook.react.PackageList

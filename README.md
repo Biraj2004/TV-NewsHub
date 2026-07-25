@@ -259,7 +259,7 @@ adb -s emulator-5554 install -r "APK Export/Cobalt-v2.0.2-arm.apk"
 
 #### Launch TV-NewsHub:
 ```bash
-adb -s emulator-5554 shell am start -n com.tempnewshub/.MainActivity
+adb -s emulator-5554 shell am start -n com.tvnewshub/.MainActivity
 ```
 
 #### Launch Cobalt:
@@ -284,7 +284,7 @@ adb -s emulator-5554 shell input keyevent 4
 ### 6. Uninstall Package (If Needed)
 
 ```bash
-adb -s emulator-5554 uninstall com.tempnewshub
+adb -s emulator-5554 uninstall com.tvnewshub
 ```
 
 ---
