@@ -176,6 +176,7 @@
     .section {
       padding: 56px 0;
       border-top: 1px solid var(--card-border);
+      scroll-margin-top: 95px;
     }
 
     .section-header {
