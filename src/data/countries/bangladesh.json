@@ -5,7 +5,8 @@
     "language": "Bengali",
     "country": "Bangladesh",
     "logo": "",
-    "youtubeChannelId": "UCxHoBXkY88Tb8z1Ssj6CWsQ"
+    "youtubeChannelId": "UCxHoBXkY88Tb8z1Ssj6CWsQ",
+    "embedUrl": "https://www.youtube.com/embed/live_stream?channel=UCxHoBXkY88Tb8z1Ssj6CWsQ&autoplay=1"
   },
   {
     "id": "jamuna-tv",
@@ -13,7 +14,8 @@
     "language": "Bengali",
     "country": "Bangladesh",
     "logo": "",
-    "youtubeChannelId": "UCfVmpWSfQWtW9GZ5eGYZlhA"
+    "youtubeChannelId": "UCfVmpWSfQWtW9GZ5eGYZlhA",
+    "embedUrl": "https://www.youtube.com/embed/live_stream?channel=UCfVmpWSfQWtW9GZ5eGYZlhA&autoplay=1"
   },
   {
     "id": "channel-24",
@@ -21,7 +23,8 @@
     "language": "Bengali",
     "country": "Bangladesh",
     "logo": "",
-    "youtubeChannelId": "UCHLqIOMPk20w-6cFgkA90jw"
+    "youtubeChannelId": "UCHLqIOMPk20w-6cFgkA90jw",
+    "embedUrl": "https://www.youtube.com/embed/live_stream?channel=UCHLqIOMPk20w-6cFgkA90jw&autoplay=1"
   },
   {
     "id": "dbc-news",
@@ -29,7 +32,8 @@
     "language": "Bengali",
     "country": "Bangladesh",
     "logo": "",
-    "youtubeChannelId": "UCUvXoiDEKI8VZJrr58g4VAw"
+    "youtubeChannelId": "UCUvXoiDEKI8VZJrr58g4VAw",
+    "embedUrl": "https://www.youtube.com/embed/live_stream?channel=UCUvXoiDEKI8VZJrr58g4VAw&autoplay=1"
   },
   {
     "id": "ekattor-tv",
@@ -37,7 +41,8 @@
     "language": "Bengali",
     "country": "Bangladesh",
     "logo": "",
-    "youtubeChannelId": "UCtqvtAVmad5zywaziN6CbfA"
+    "youtubeChannelId": "UCtqvtAVmad5zywaziN6CbfA",
+    "embedUrl": "https://www.youtube.com/embed/live_stream?channel=UCtqvtAVmad5zywaziN6CbfA&autoplay=1"
   },
   {
     "id": "al-jazeera-english",
@@ -45,7 +50,8 @@
     "language": "English",
     "country": "Bangladesh",
     "logo": "",
-    "youtubeChannelId": "UCNye-wNBqNL5ZzHSJj3l8Bg"
+    "youtubeChannelId": "UCNye-wNBqNL5ZzHSJj3l8Bg",
+    "embedUrl": "https://www.youtube.com/embed/live_stream?channel=UCNye-wNBqNL5ZzHSJj3l8Bg&autoplay=1"
   },
   {
     "id": "bbc-news",
@@ -53,7 +59,9 @@
     "language": "English",
     "country": "Bangladesh",
     "logo": "",
-    "youtubeChannelId": "UC16niRr50-MSBwiO3YDb3RA"
+    "youtubeChannelId": "UC16niRr50-MSBwiO3YDb3RA",
+    "streamUrl": "https://vs-hls-push-ww-live.akamaized.net/x=4/i=urn:bbc:pips:service:bbc_news_channel_hd/mobile_wifi_main_hd_abr_v2.m3u8",
+    "embedUrl": "https://www.youtube.com/embed/live_stream?channel=UC16niRr50-MSBwiO3YDb3RA&autoplay=1"
   },
   {
     "id": "dw-news",
@@ -61,7 +69,9 @@
     "language": "English",
     "country": "Bangladesh",
     "logo": "",
-    "youtubeChannelId": "UCknLrEdhRCp1aegoMqRaCZg"
+    "youtubeChannelId": "UCknLrEdhRCp1aegoMqRaCZg",
+    "streamUrl": "https://dwamdstream102.akamaized.net/hls/live/2015525/dwstream102/index.m3u8",
+    "embedUrl": "https://www.youtube.com/embed/live_stream?channel=UCknLrEdhRCp1aegoMqRaCZg&autoplay=1"
   },
   {
     "id": "wion",
@@ -69,7 +79,9 @@
     "language": "English",
     "country": "Bangladesh",
     "logo": "",
-    "youtubeChannelId": "UCWEIPvoxRwn6llPOIn555rQ"
+    "youtubeChannelId": "UCWEIPvoxRwn6llPOIn555rQ",
+    "streamUrl": "https://wion-klowdtv.amagi.tv/playlist.m3u8",
+    "m3uUrl": "https://vg-zeefta.akamaized.net/ptnr-yupptv/title-wion/v1/master/611d79b11b77e2f571934fd80ca1413453772ac7/20c3c0d9-0256-43fe-bca6-70fdd490b957/main.m3u8"
   },
   {
     "id": "cna",
@@ -77,6 +89,8 @@
     "language": "English",
     "country": "Bangladesh",
     "logo": "",
-    "youtubeChannelId": "UCWLpLjjiDrH8gkOUJmB7DSw"
+    "youtubeChannelId": "UCWLpLjjiDrH8gkOUJmB7DSw",
+    "streamUrl": "https://d2e1asnsl7br7b.cloudfront.net/7782e205e72f43aeb4a48ec97f66ebbe/index.m3u8",
+    "m3uUrl": "https://amg01082-cna-amg01082c1-rlaxx-us-11304.playouts.now.amagi.tv/playlist.m3u8"
   }
 ]

@@ -9,6 +9,7 @@ export interface Channel {
   logo: string;
   youtubeChannelId?: string;
   streamUrl?: string; // Direct HLS (.m3u8) feed (e.g. 1080p Akamai/CloudFront CDN)
+  m3uUrl?: string;    // Secondary HLS (.m3u8) fallback feed
   embedUrl?: string;  // Web embed feed
 }
 

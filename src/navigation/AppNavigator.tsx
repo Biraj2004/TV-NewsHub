@@ -3,7 +3,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
 import { HomeScreen } from '../screens/HomeScreen';
 import { PlayerScreen } from '../screens/PlayerScreen';
-import { Channel } from '../components/ChannelTile';
+import { Channel } from '../data/channels';
 
 export type RootStackParamList = {
   Home: { focusChannelId?: string };

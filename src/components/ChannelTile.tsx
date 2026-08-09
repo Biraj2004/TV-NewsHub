@@ -4,16 +4,8 @@ import { useLiveChannelResolver } from '../hooks/useLiveChannelResolver';
 import { localLogos } from '../utils/logoHelper';
 import { StatusBadge, BadgeType } from './StatusBadge';
 
-export interface Channel {
-  id: string;
-  name: string;
-  language: string;
-  country: string;
-  logo: string;
-  youtubeChannelId?: string;
-  streamUrl?: string;
-  embedUrl?: string;
-}
+import { Channel } from '../data/channels';
+export type { Channel };
 
 interface ChannelTileProps {
   channel: Channel;

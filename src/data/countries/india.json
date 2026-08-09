@@ -6,7 +6,8 @@
     "country": "India",
     "logo": "",
     "youtubeChannelId": "UCajVjEHDoVn_AHsunUZz_EQ",
-    "streamUrl": "https://vg-republictvlive.akamaized.net/v1/master/611d79b11b77e2f571934fd80ca1413453772ac7/vglive-sk-456368/main.m3u8"
+    "streamUrl": "https://vg-republictvlive.akamaized.net/v1/master/611d79b11b77e2f571934fd80ca1413453772ac7/vglive-sk-456368/main.m3u8",
+    "m3uUrl": "https://cdn-4.pishow.tv/live/270/master.m3u8"
   },
   {
     "id": "abp-ananda",
@@ -15,7 +16,8 @@
     "country": "India",
     "logo": "",
     "youtubeChannelId": "UCv3rFzn-GHGtqzXiaq3sWNg",
-    "streamUrl": "https://abplivetv.akamaized.net/hls/live/2043012/ananda/master.m3u8"
+    "streamUrl": "https://d2l4ar6y3mrs4k.cloudfront.net/live-streaming/ananda-livetv/master.m3u8",
+    "m3uUrl": "https://abplivetv.akamaized.net/hls/live/2043012/ananda/master.m3u8"
   },
   {
     "id": "tv9-bangla",
@@ -24,7 +26,8 @@
     "country": "India",
     "logo": "",
     "youtubeChannelId": "UCHCR4UFsGwd_VcDa0-a4haw",
-    "streamUrl": "https://dyjmyiv3bp2ez.cloudfront.net/pub-iotv9banaen8yq/liveabr/playlist.m3u8"
+    "streamUrl": "https://dyjmyiv3bp2ez.cloudfront.net/pub-iotv9banaen8yq/liveabr/playlist.m3u8",
+    "embedUrl": "https://www.youtube.com/embed/live_stream?channel=UCHCR4UFsGwd_VcDa0-a4haw&autoplay=1"
   },
   {
     "id": "news18-bangla",
@@ -33,7 +36,8 @@
     "country": "India",
     "logo": "",
     "youtubeChannelId": "UCbf0XHULBkTfv2hBjaaDw9Q",
-    "streamUrl": "https://n18syndication.akamaized.net/bpk-tv/News18_Bangla_NW18_MOB/output01/master.m3u8"
+    "streamUrl": "https://n18syndication.akamaized.net/bpk-tv/News18_Bangla_NW18_MOB/output01/master.m3u8",
+    "embedUrl": "https://www.youtube.com/embed/live_stream?channel=UCbf0XHULBkTfv2hBjaaDw9Q&autoplay=1"
   },
   {
     "id": "calcutta-news",
@@ -42,7 +46,8 @@
     "country": "India",
     "logo": "",
     "youtubeChannelId": "UCJ3I6MHOz5exARlTW_meOGQ",
-    "streamUrl": "https://akdnetwork.co.in/live/cnnews/index.m3u8"
+    "streamUrl": "https://akdnetwork.co.in/live/cnnews/index.m3u8",
+    "m3uUrl": "https://live.legitpro.co.in/cnnnews/index.m3u8"
   },
   {
     "id": "zee-24-ghanta",
@@ -51,6 +56,7 @@
     "country": "India",
     "logo": "",
     "youtubeChannelId": "UCdF5Q5QVbYstYrTfpgUl0ZA",
+    "streamUrl": "https://d2dsoyvkr33m05.cloudfront.net/index_4.m3u8",
     "embedUrl": "https://zeenews.india.com/bengali/news/live-tv?videoId=zee_24ghanta&autoplay=1"
   },
   {
@@ -59,7 +65,9 @@
     "language": "Hindi",
     "country": "India",
     "logo": "",
-    "youtubeChannelId": "UCZFMm1mMw0F81Z37aaEzTUA"
+    "youtubeChannelId": "UCZFMm1mMw0F81Z37aaEzTUA",
+    "streamUrl": "https://ndtvindiaelemarchana.akamaized.net/hls/live/2003679/ndtvindia/master.m3u8",
+    "m3uUrl": "https://raw.githubusercontent.com/amazeyourself/adaptive-streams/refs/heads/main/streams/in/YuppTV/NDTVIndia.m3u8"
   },
   {
     "id": "aaj-tak",
@@ -67,7 +75,9 @@
     "language": "Hindi",
     "country": "India",
     "logo": "",
-    "youtubeChannelId": "UCt4t-jeY85JegMlZ-E5UWtA"
+    "youtubeChannelId": "UCt4t-jeY85JegMlZ-E5UWtA",
+    "streamUrl": "https://feeds.intoday.in/aajtak/api/aajtakhd/master.m3u8",
+    "m3uUrl": "https://d1rc86nwwc9fag.cloudfront.net/vglive-sk-791258/master.m3u8"
   },
   {
     "id": "abp-news",
@@ -75,7 +85,9 @@
     "language": "Hindi",
     "country": "India",
     "logo": "",
-    "youtubeChannelId": "UCRWFSbif-RFENbBrSiez1DA"
+    "youtubeChannelId": "UCRWFSbif-RFENbBrSiez1DA",
+    "streamUrl": "https://d1rc86nwwc9fag.cloudfront.net/vglive-sk-472500/abpnews/master.m3u8",
+    "m3uUrl": "https://d2l4ar6y3mrs4k.cloudfront.net/live-streaming/abpnews-livetv/master.m3u8"
   },
   {
     "id": "zee-news",
@@ -83,7 +95,9 @@
     "language": "Hindi",
     "country": "India",
     "logo": "",
-    "youtubeChannelId": "UCIvaYmXn910QMdemBG3v1pQ"
+    "youtubeChannelId": "UCIvaYmXn910QMdemBG3v1pQ",
+    "streamUrl": "https://vg-zeefta.akamaized.net/ptnr-yupptv/title-zeenews/v1/master/611d79b11b77e2f571934fd80ca1413453772ac7/8744f9fb-d696-4204-9795-5215ad930c39/main.m3u8",
+    "m3uUrl": "https://dt3lrqnyx3dks.cloudfront.net/index.m3u8"
   },
   {
     "id": "india-tv",
@@ -91,7 +105,9 @@
     "language": "Hindi",
     "country": "India",
     "logo": "",
-    "youtubeChannelId": "UCttspZesZIDEwwpVIgoZtWQ"
+    "youtubeChannelId": "UCttspZesZIDEwwpVIgoZtWQ",
+    "streamUrl": "https://pl-indiatvnews.akamaized.net/out/v1/db79179b608641ceaa5a4d0dd0dca8da/index.m3u8",
+    "m3uUrl": "https://cdn-2.pishow.tv/live/1043/master.m3u8"
   },
   {
     "id": "india-today",
@@ -99,7 +115,9 @@
     "language": "English",
     "country": "India",
     "logo": "",
-    "youtubeChannelId": "UCYPvAwZP8pZhSMW8qs7cVCw"
+    "youtubeChannelId": "UCYPvAwZP8pZhSMW8qs7cVCw",
+    "streamUrl": "https://indiatodaylive.akamaized.net/hls/live/2014320/indiatoday/indiatodaylive/playlist.m3u8",
+    "m3uUrl": "https://d1rc86nwwc9fag.cloudfront.net/vglive-sk-293160/master.m3u8"
   },
   {
     "id": "wion",
@@ -107,7 +125,9 @@
     "language": "English",
     "country": "India",
     "logo": "",
-    "youtubeChannelId": "UCWEIPvoxRwn6llPOIn555rQ"
+    "youtubeChannelId": "UCWEIPvoxRwn6llPOIn555rQ",
+    "streamUrl": "https://wion-klowdtv.amagi.tv/playlist.m3u8",
+    "m3uUrl": "https://vg-zeefta.akamaized.net/ptnr-yupptv/title-wion/v1/master/611d79b11b77e2f571934fd80ca1413453772ac7/20c3c0d9-0256-43fe-bca6-70fdd490b957/main.m3u8"
   },
   {
     "id": "ndtv-24x7",
@@ -115,7 +135,9 @@
     "language": "English",
     "country": "India",
     "logo": "",
-    "youtubeChannelId": "UCXBD5iG5cr4ZYZ99K-fmDHg"
+    "youtubeChannelId": "UCXBD5iG5cr4ZYZ99K-fmDHg",
+    "streamUrl": "https://ndtv24x7elemarchana.akamaized.net/hls/live/2003678/ndtv24x7/master.m3u8",
+    "m3uUrl": "https://raw.githubusercontent.com/amazeyourself/adaptive-streams/refs/heads/main/streams/in/YuppTV/NDTV24x7.m3u8"
   },
   {
     "id": "republic-world",
@@ -123,7 +145,9 @@
     "language": "English",
     "country": "India",
     "logo": "",
-    "youtubeChannelId": "UCwqusr8YDwM-3mEYTDeJHzw"
+    "youtubeChannelId": "UCwqusr8YDwM-3mEYTDeJHzw",
+    "streamUrl": "https://d3qs3d2rkhfqrt.cloudfront.net/out/v1/2e31d831f08640ff92f65003bdc89991/index.m3u8",
+    "m3uUrl": "https://samsung-republictv.amagi.tv/ts-ap-s1-n1/playlist/samsungin-republictv-samsungindia/playlist.m3u8"
   },
   {
     "id": "times-now",
@@ -131,6 +155,8 @@
     "language": "English",
     "country": "India",
     "logo": "",
-    "youtubeChannelId": "UC6RJ7-PaXg6TIH2BzZfTV7w"
+    "youtubeChannelId": "UC6RJ7-PaXg6TIH2BzZfTV7w",
+    "streamUrl": "https://dztlhgid9me95.cloudfront.net/live-tv/Vidgyor/timesnow/timesnow_master.m3u8",
+    "embedUrl": "https://www.youtube.com/embed/live_stream?channel=UC6RJ7-PaXg6TIH2BzZfTV7w&autoplay=1"
   }
 ]

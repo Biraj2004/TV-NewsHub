@@ -40,7 +40,7 @@
     <header class="hero-section">
       <h1 class="hero-title"><span>TV-NewsHub</span> — Smart TV Live News Engine</h1>
       <p class="hero-subtitle">
-        A premium, open-source, dark-themed Android TV news aggregator designed for 10-foot remote viewing. Features direct 1080p HLS streaming, multi-tier fallback architecture, and real-time program guide integration.
+        A premium, open-source, dark-themed Android TV news aggregator designed for 10-foot remote viewing. Features direct 1080p HLS streaming, 3-tier fallback architecture, PlaybackErrorScreen component, and real-time program guide integration.
       </p>
 
       <div class="spec-badges-row">
@@ -48,8 +48,8 @@
         <span class="badge-chip">TypeScript 5.8</span>
         <span class="badge-chip">Direct 1080p HLS (.m3u8)</span>
         <span class="badge-chip">Hardware GPU Acceleration</span>
+        <span class="badge-chip">100% HTTPS TLS Enforced</span>
         <span class="badge-chip">Apache 2.0 License</span>
-        <span class="badge-chip">Open Source Repository</span>
       </div>
     </header>
 
@@ -72,7 +72,7 @@
           <div id="view-home" class="screen-home">
             <div class="home-top-bar">
               <div class="app-brand-title">TV-NewsHub</div>
-              <div class="engine-status-badge">Stream Engine Ready</div>
+              <div class="engine-status-badge">3-Tier Engine Ready</div>
             </div>
 
             <div class="filter-group">
@@ -87,7 +87,7 @@
               <div class="filter-chip">English</div>
             </div>
 
-            <div class="grid-label">Active Bengali News Channels (5 Configured Feeds) — Click Any Card To Test</div>
+            <div class="grid-label">Active Bengali News Channels (6 Configured Feeds) — Click Any Card To Test</div>
 
             <div class="channel-grid">
               
@@ -115,7 +115,7 @@
                 </div>
                 <div>
                   <div class="tile-title">ABP Ananda</div>
-                  <div class="tile-sub">Live Share Widget</div>
+                  <div class="tile-sub">CloudFront 1080p HLS</div>
                 </div>
               </div>
 
@@ -147,6 +147,20 @@
                 </div>
               </div>
 
+              <!-- Calcutta News -->
+              <div class="channel-tile" onclick="selectChannel('calcutta-news')">
+                <div class="tile-header">
+                  <div class="tile-logo-frame">
+                    <img src="channel-logos/India/Bengali/calcutta-news.png" alt="Calcutta News" onerror="this.src='branding-icons/app_icon.svg'">
+                  </div>
+                  <span class="live-badge">LIVE</span>
+                </div>
+                <div>
+                  <div class="tile-title">Calcutta News</div>
+                  <div class="tile-sub">AKD Network HLS</div>
+                </div>
+              </div>
+
               <!-- Zee 24 Ghanta -->
               <div class="channel-tile" onclick="selectChannel('zee-24-ghanta')">
                 <div class="tile-header">
@@ -157,7 +171,7 @@
                 </div>
                 <div>
                   <div class="tile-title">Zee 24 Ghanta</div>
-                  <div class="tile-sub">Live Share Widget</div>
+                  <div class="tile-sub">CloudFront 1080p HLS</div>
                 </div>
               </div>
 
@@ -169,7 +183,7 @@
             <div class="stream-canvas-mock">
               <div class="stream-info-pill">
                 <h4 id="player-title">1080p Full HD Active Stream</h4>
-                <p id="player-sub">Akamai Syndicate CDN (1920x1080 @ 3.9 Mbps · GPU Hardware Decoded)</p>
+                <p id="player-sub">Akamai / CloudFront CDN (1920x1080 @ 3.9 Mbps · GPU Hardware Decoded)</p>
               </div>
             </div>
 
@@ -185,7 +199,7 @@
                       <span class="live-badge">LIVE</span>
                     </div>
                     <div id="active-headline" class="overlay-headline-text">
-                      Headline: Fataak News · মমতা বন্দ্যোপাধ্যায়: ২৫ জুলাই সামনে আসছে ক্যাড রিপোর্ট
+                      Headline: Fataak News · রক্ত জালিয়াতি রুখতে তৎপর রাজ‍্য সরকার
                     </div>
                   </div>
                 </div>
@@ -214,7 +228,7 @@
     <div id="channels" class="section">
       <div class="section-header">
         <h2 class="section-title">2. Configured Live Channel Specifications</h2>
-        <p class="section-desc">Active live news channels with syndication stream parameters and CDN sources</p>
+        <p class="section-desc">Active live news channels with verified 3-tier fallback parameters and CDN sources</p>
       </div>
 
       <div class="spec-table-container">
@@ -223,9 +237,9 @@
             <tr>
               <th>Channel Name</th>
               <th>Language</th>
-              <th>Stream Provider Type</th>
-              <th>CDN / Endpoint Source</th>
-              <th>Resolution Quality</th>
+              <th>Primary Stream (Tier 1)</th>
+              <th>Secondary / Embed (Tier 2)</th>
+              <th>YouTube Resolver (Tier 3)</th>
               <th>Status</th>
             </tr>
           </thead>
@@ -233,42 +247,114 @@
             <tr>
               <td><strong>Republic Bangla</strong></td>
               <td>Bengali</td>
-              <td>Direct HLS (<span class="code-tag">streamUrl</span>)</td>
-              <td>Akamai CDN Master Playlist</td>
-              <td><strong>1080p Full HD</strong> (1920x1080)</td>
-              <td><span class="status-active-badge">Active</span></td>
+              <td>Direct HLS (<span class="code-tag">Akamai 1080p</span>)</td>
+              <td>Pishow CDN Playlist</td>
+              <td><span class="code-tag">UCajVjEHDo...</span></td>
+              <td><span class="status-active-badge">Active (3 Tiers)</span></td>
             </tr>
             <tr>
               <td><strong>ABP Ananda</strong></td>
               <td>Bengali</td>
-              <td>Official Web Embed (<span class="code-tag">embedUrl</span>)</td>
-              <td><span class="code-tag">bengali.abplive.com/sharewidget/...</span></td>
-              <td><strong>1080p HD</strong> Container</td>
-              <td><span class="status-active-badge">Active</span></td>
+              <td>Direct HLS (<span class="code-tag">CloudFront 1080p</span>)</td>
+              <td>Akamai CDN Master Playlist</td>
+              <td><span class="code-tag">UCv3rFzn-...</span></td>
+              <td><span class="status-active-badge">Active (3 Tiers)</span></td>
             </tr>
             <tr>
               <td><strong>TV9 Bangla</strong></td>
               <td>Bengali</td>
-              <td>Direct HLS (<span class="code-tag">streamUrl</span>)</td>
-              <td>CloudFront CDN Adaptive Feed</td>
-              <td><strong>720p / 1080p HD</strong></td>
-              <td><span class="status-active-badge">Active</span></td>
+              <td>Direct HLS (<span class="code-tag">CloudFront HD</span>)</td>
+              <td>Direct Web Embed</td>
+              <td><span class="code-tag">UCHCR4UFs...</span></td>
+              <td><span class="status-active-badge">Active (3 Tiers)</span></td>
             </tr>
             <tr>
               <td><strong>News18 Bangla</strong></td>
               <td>Bengali</td>
-              <td>Direct HLS (<span class="code-tag">streamUrl</span>)</td>
-              <td>Akamai Broadpeak Origin Packager</td>
-              <td><strong>720p / 1080p HD</strong></td>
-              <td><span class="status-active-badge">Active</span></td>
+              <td>Direct HLS (<span class="code-tag">Akamai HD</span>)</td>
+              <td>Direct Web Embed</td>
+              <td><span class="code-tag">UCbf0XHUL...</span></td>
+              <td><span class="status-active-badge">Active (3 Tiers)</span></td>
+            </tr>
+            <tr>
+              <td><strong>Calcutta News</strong></td>
+              <td>Bengali</td>
+              <td>Direct HLS (<span class="code-tag">AKD Network</span>)</td>
+              <td>LegitPro CDN Playlist</td>
+              <td><span class="code-tag">UCJ3I6MHO...</span></td>
+              <td><span class="status-active-badge">Active (3 Tiers)</span></td>
             </tr>
             <tr>
               <td><strong>Zee 24 Ghanta</strong></td>
               <td>Bengali</td>
-              <td>Official Web Embed (<span class="code-tag">embedUrl</span>)</td>
-              <td><span class="code-tag">zeenews.india.com/bengali/...</span></td>
-              <td><strong>1080p HD</strong> Container</td>
-              <td><span class="status-active-badge">Active</span></td>
+              <td>Direct HLS (<span class="code-tag">CloudFront 1080p</span>)</td>
+              <td>Official Web Embed</td>
+              <td><span class="code-tag">UCdF5Q5QV...</span></td>
+              <td><span class="status-active-badge">Active (3 Tiers)</span></td>
+            </tr>
+            <tr>
+              <td><strong>NDTV India</strong></td>
+              <td>Hindi</td>
+              <td>Direct HLS (<span class="code-tag">Akamai 1080p</span>)</td>
+              <td>YuppTV Stream Feed</td>
+              <td><span class="code-tag">UCZFMm1mM...</span></td>
+              <td><span class="status-active-badge">Active (3 Tiers)</span></td>
+            </tr>
+            <tr>
+              <td><strong>Aaj Tak</strong></td>
+              <td>Hindi</td>
+              <td>Direct HLS (<span class="code-tag">InToday HD</span>)</td>
+              <td>CloudFront Master Playlist</td>
+              <td><span class="code-tag">UCt4t-jeY...</span></td>
+              <td><span class="status-active-badge">Active (3 Tiers)</span></td>
+            </tr>
+            <tr>
+              <td><strong>ABP News</strong></td>
+              <td>Hindi</td>
+              <td>Direct HLS (<span class="code-tag">CloudFront 1080p</span>)</td>
+              <td>CloudFront Stream Feed</td>
+              <td><span class="code-tag">UCRWFSbif...</span></td>
+              <td><span class="status-active-badge">Active (3 Tiers)</span></td>
+            </tr>
+            <tr>
+              <td><strong>Somoy TV</strong></td>
+              <td>Bengali</td>
+              <td>—</td>
+              <td>Direct Web Embed</td>
+              <td><span class="code-tag">UCxHoBXkY...</span></td>
+              <td><span class="status-active-badge">Active (2 Tiers)</span></td>
+            </tr>
+            <tr>
+              <td><strong>Jamuna TV</strong></td>
+              <td>Bengali</td>
+              <td>—</td>
+              <td>Direct Web Embed</td>
+              <td><span class="code-tag">UCfVmpWSf...</span></td>
+              <td><span class="status-active-badge">Active (2 Tiers)</span></td>
+            </tr>
+            <tr>
+              <td><strong>Al Jazeera English</strong></td>
+              <td>English</td>
+              <td>—</td>
+              <td>Direct Web Embed</td>
+              <td><span class="code-tag">UCNye-wNB...</span></td>
+              <td><span class="status-active-badge">Active (2 Tiers)</span></td>
+            </tr>
+            <tr>
+              <td><strong>BBC News</strong></td>
+              <td>English</td>
+              <td>Direct HLS (<span class="code-tag">Akamai HD</span>)</td>
+              <td>Direct Web Embed</td>
+              <td><span class="code-tag">UC16niRr5...</span></td>
+              <td><span class="status-active-badge">Active (3 Tiers)</span></td>
+            </tr>
+            <tr>
+              <td><strong>CNA</strong></td>
+              <td>English</td>
+              <td>Direct HLS (<span class="code-tag">CloudFront HD</span>)</td>
+              <td>Amagi Playout Stream</td>
+              <td><span class="code-tag">UCWLpLjji...</span></td>
+              <td><span class="status-active-badge">Active (3 Tiers)</span></td>
             </tr>
           </tbody>
         </table>
@@ -285,11 +371,11 @@
       <div class="breakdown-grid" style="margin-bottom: 32px;">
         
         <div class="breakdown-card">
-          <h3>Multi-Provider Streaming Engine</h3>
+          <h3>3-Tier Fallback Streaming Engine</h3>
           <p>Implemented in <span class="code-tag">src/screens/PlayerScreen.tsx</span></p>
           <ul class="details-list">
             <li><strong>Tier 1 (<span class="code-tag">streamUrl</span>)</strong>: Direct HLS <span class="code-tag">.m3u8</span> playback via HTML5 video container.</li>
-            <li><strong>Tier 2 (<span class="code-tag">embedUrl</span>)</strong>: Official share widgets rendered in isolated WebView containers.</li>
+            <li><strong>Tier 2 (<span class="code-tag">m3uUrl / embedUrl</span>)</strong>: Secondary HLS feeds or official share widgets.</li>
             <li><strong>Tier 3 (<span class="code-tag">youtubeChannelId</span>)</strong>: Fallback Desktop YouTube Live Resolver.</li>
           </ul>
         </div>
@@ -299,8 +385,8 @@
           <p>Implemented in <span class="code-tag">src/hooks/useLiveChannelResolver.ts</span></p>
           <ul class="details-list">
             <li>Extracts real-time broadcast headlines (e.g. <i>"Fataak News"</i>, <i>"Aaj Banglay"</i>).</li>
+            <li>10-second <span class="code-tag">AbortController</span> request timeout & 5-minute memory cache.</li>
             <li>Passes <span class="code-tag">programTitle</span> dynamically to top TV overlay.</li>
-            <li>Auto-updates live status badges across the channel grid.</li>
           </ul>
         </div>
 
@@ -308,9 +394,9 @@
           <h3>Smart TV Remote Navigation</h3>
           <p>Implemented via <span class="code-tag">useTVEventHandler</span></p>
           <ul class="details-list">
-            <li><strong>LEFT / RIGHT</strong>: Channel surfing zapping (instant previous/next channel).</li>
-            <li><strong>OK / CENTER</strong>: Shows/hides translucent TV overlay banner.</li>
-            <li><strong>BACK</strong>: Smooth hardware back handler returns to TV grid.</li>
+            <li><strong>LEFT / RIGHT</strong>: Instant channel surfing zapping.</li>
+            <li><strong>OK / CENTER</strong>: Toggles play/pause and translucent TV overlay banner.</li>
+            <li><strong>BACK</strong>: Smooth hardware back handler returns focus to home grid.</li>
           </ul>
         </div>
 
@@ -322,12 +408,12 @@
         
         <div class="edge-case-card">
           <h4>CDN Stream Disconnection / 404 Expiration</h4>
-          <p>If a primary HLS stream drops or encounters a CDN token rotation error, the player automatically falls back to Tier 2 (Web Embed) or Tier 3 (YouTube Live Resolver) without crashing.</p>
+          <p>If a primary HLS stream drops or encounters a CDN token rotation error, the player automatically steps down to Tier 2 (m3uUrl/Embed) or Tier 3 (YouTube Live Resolver) without crashing.</p>
         </div>
 
         <div class="edge-case-card">
-          <h4>Ended Broadcasts / Offline Channels</h4>
-          <p>When a live stream ends or reports an offline state, an error overlay appears with a 5-second countdown timer, automatically returning the user to their last focused tile on the home grid.</p>
+          <h4>Dedicated TV PlaybackErrorScreen</h4>
+          <p>When all 3 tiers are unreachable or offline, the player renders <span class="code-tag">PlaybackErrorScreen</span> with a focusable <span class="code-tag">[ Return to Channel Grid ]</span> button (<span class="code-tag">hasTVPreferredFocus={true}</span>) and an 8-second auto-return timer.</p>
         </div>
 
         <div class="edge-case-card">
@@ -336,8 +422,8 @@
         </div>
 
         <div class="edge-case-card">
-          <h4>Smart TV D-Pad Focus Retention</h4>
-          <p>Includes an invisible <span class="code-tag">FocusGrabber</span> pressable layer above the video player canvas to ensure Smart TV D-Pad focus is never lost to web components.</p>
+          <h4>100% HTTPS Security Enforcement</h4>
+          <p>All network requests, HLS playlists, and WebView embed endpoints strictly enforce TLS <span class="code-tag">https://</span> transport security with zero insecure HTTP links.</p>
         </div>
 
       </div>
@@ -361,7 +447,7 @@
         <div class="legal-card">
           <h3>Security Architecture</h3>
           <p><strong>Strict HTTPS & Transport Security</strong>: All network requests, HLS streams, and API interactions strictly enforce Transport Layer Security (TLS 1.2+ / HTTPS).</p>
-          <p><strong>Sandboxed Web Execution</strong>: Embedded web share widgets run within isolated WebViews with restricted DOM access to prevent cross-origin script injection or unauthorized access.</p>
+          <p><strong>Sandboxed Web Execution</strong>: Embedded web share widgets run within isolated WebViews with restricted DOM access and URL sanitization (<span class="code-tag">sanitizeUrl</span>) to prevent cross-origin script injection.</p>
         </div>
 
       </div>
@@ -400,7 +486,7 @@
 
   </div>
 
-  <!-- Scroll To Top Floating Button (No Hover Movement) -->
+  <!-- Scroll To Top Floating Button -->
   <button id="scrollToTopBtn" class="scroll-to-top-btn" onclick="scrollToTop()" title="Scroll to Top">
     ↑
   </button>

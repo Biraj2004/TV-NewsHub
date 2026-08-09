@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { View, Text, StyleSheet, BackHandler, Pressable, ActivityIndicator, useWindowDimensions } from 'react-native';
+import { View, StyleSheet, BackHandler, Pressable, ActivityIndicator, useWindowDimensions } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { WebView } from 'react-native-webview';
 import { ConsentSafeYouTubePlayer, ConsentSafeYouTubePlayerRef } from '../components/ConsentSafeYouTubePlayer';
 import { RootStackParamList } from '../navigation/AppNavigator';
+import { Channel } from '../data/channels';
 import { PlayerOverlay } from '../components/PlayerOverlay';
+import { PlaybackErrorScreen } from '../components/PlaybackErrorScreen';
 import { useIdleTimer } from '../hooks/useIdleTimer';
 import { useLiveChannelResolver } from '../hooks/useLiveChannelResolver';
 import { setLastWatchedChannel } from '../utils/storage';
@@ -18,6 +20,18 @@ import {
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Player'>;
 
+// Tier mapping:
+// Tier 1: Primary direct HLS stream (streamUrl)
+// Tier 2: Secondary HLS stream (m3uUrl) OR Web Embed (embedUrl)
+// Tier 3: YouTube Live Resolver (youtubeChannelId)
+
+function getInitialTier(ch: Channel) {
+  if (ch.streamUrl) return 1;
+  if (ch.m3uUrl || ch.embedUrl) return 2;
+  if (ch.youtubeChannelId) return 3;
+  return 1;
+}
+
 export function PlayerScreen({ route, navigation }: Props) {
   const { filteredChannels, initialIndex } = route.params;
   const { width, height } = useWindowDimensions();
@@ -29,13 +43,11 @@ export function PlayerScreen({ route, navigation }: Props) {
   const [currentIndex, setCurrentIndex] = useState<number>(initialIndex);
   const currentChannel = filteredChannels[currentIndex];
 
-  // Dynamic Tier Fallback State: if primary streamUrl/embedUrl fails, fallback to youtubeChannelId if available
-  const [useYoutubeFallback, setUseYoutubeFallback] = useState<boolean>(false);
+  const [activeTier, setActiveTier] = useState<number>(() => getInitialTier(currentChannel));
 
-  const hasPrimaryDirectSource = !useYoutubeFallback && !!(currentChannel.streamUrl || currentChannel.embedUrl);
-  const activeYoutubeChannelId = (!hasPrimaryDirectSource && currentChannel.youtubeChannelId) ? currentChannel.youtubeChannelId : null;
+  const activeYoutubeChannelId = (activeTier === 3 && currentChannel.youtubeChannelId) ? currentChannel.youtubeChannelId : null;
 
-  // Resolve live videoId for Tier 3 / Fallback channels
+  // Resolve live videoId ONLY when activeTier === 3
   const { videoId, videoTitle, isLoading, isError } = useLiveChannelResolver(activeYoutubeChannelId);
 
   const [isPlaying, setIsPlaying] = useState<boolean>(true);
@@ -48,20 +60,38 @@ export function PlayerScreen({ route, navigation }: Props) {
   useEffect(() => {
     setPlaybackError(null);
     setIsPlaying(true);
-    setUseYoutubeFallback(false);
+    setActiveTier(getInitialTier(currentChannel));
     setLastWatchedChannel(currentChannel.id);
     hideOverlay();
   }, [currentIndex, currentChannel, hideOverlay]);
 
-  // Handle primary stream error: fallback to YouTube channel if present, else trigger playback error
-  const handlePrimaryStreamError = useCallback((errorMessage: string) => {
-    if (currentChannel.youtubeChannelId && !useYoutubeFallback) {
-      if (__DEV__) { console.log('[PlayerScreen] Primary stream failed. Falling back to YouTube Live Resolver...'); }
-      setUseYoutubeFallback(true);
-    } else {
-      setPlaybackError(errorMessage);
+  // Fallback engine: advance to next tier on error
+  const handleStreamError = useCallback((failedTier: number, errorMessage: string) => {
+    if (__DEV__) {
+      console.warn(`[PlayerScreen] Stream failed on Tier ${failedTier} (${errorMessage}) for channel ${currentChannel.name}`);
     }
-  }, [currentChannel, useYoutubeFallback]);
+
+    if (failedTier === 1) {
+      if (currentChannel.m3uUrl || currentChannel.embedUrl) {
+        if (__DEV__) { console.log('[PlayerScreen] Falling back to Tier 2 (m3uUrl/embedUrl)...'); }
+        setActiveTier(2);
+        return;
+      }
+      if (currentChannel.youtubeChannelId) {
+        if (__DEV__) { console.log('[PlayerScreen] Falling back to Tier 3 (YouTube Resolver)...'); }
+        setActiveTier(3);
+        return;
+      }
+    } else if (failedTier === 2) {
+      if (currentChannel.youtubeChannelId) {
+        if (__DEV__) { console.log('[PlayerScreen] Tier 2 failed. Falling back to Tier 3 (YouTube Resolver)...'); }
+        setActiveTier(3);
+        return;
+      }
+    }
+
+    setPlaybackError(errorMessage);
+  }, [currentChannel]);
 
   // Navigate to previous channel
   const handlePrevChannel = useCallback(() => {
@@ -88,9 +118,9 @@ export function PlayerScreen({ route, navigation }: Props) {
   }, [handleBack]);
 
   const handlePressScreen = useCallback(() => {
-    if (hasPrimaryDirectSource && currentChannel.embedUrl) {
+    if (activeTier === 2 && currentChannel.embedUrl) {
       embedWebViewRef.current?.injectJavaScript(EMBED_FORCE_PLAY_SCRIPT);
-    } else if (!hasPrimaryDirectSource) {
+    } else if (activeTier === 3) {
       ytPlayerRef.current?.forcePlay();
       if (!isPlaying) {
         setIsPlaying(true);
@@ -110,9 +140,9 @@ export function PlayerScreen({ route, navigation }: Props) {
         showOverlay();
       }
     }
-  }, [hasPrimaryDirectSource, currentChannel, isPlaying, isVisible, showOverlay]);
+  }, [activeTier, currentChannel, isPlaying, isVisible, showOverlay]);
 
-  // TV Remote: OK plays/pauses or shows controls; DOWN shows controls; UP hides controls; LEFT/RIGHT switches channel
+  // TV Remote controls
   useTVEventHandler((event) => {
     if (!event) return;
     const { eventType } = event;
@@ -126,24 +156,24 @@ export function PlayerScreen({ route, navigation }: Props) {
     } else if (eventType === 'up' || eventType === 'dpadUp') {
       hideOverlay();
     } else if (eventType === 'select' || eventType === 'dpadCenter' || eventType === 'playPause') {
-      if (hasPrimaryDirectSource && currentChannel.embedUrl) {
+      if (activeTier === 2 && currentChannel.embedUrl) {
         embedWebViewRef.current?.injectJavaScript(EMBED_FORCE_PLAY_SCRIPT);
-      } else if (!hasPrimaryDirectSource) {
+      } else if (activeTier === 3) {
         ytPlayerRef.current?.forcePlay();
       }
       handlePressScreen();
     }
   });
 
-  const isOffline = !hasPrimaryDirectSource && (isError || (!isLoading && !videoId));
+  const isOffline = activeTier === 3 && (isError || (!isLoading && !videoId));
   const hasError = playbackError || isOffline;
 
-  // Auto-return to grid on ended or offline channels
+  // Auto-return to grid on ended or offline channels after 8 seconds
   useEffect(() => {
     if (hasError) {
       const timer = setTimeout(() => {
         navigation.navigate('Home', { focusChannelId: currentChannel.id });
-      }, 5000);
+      }, 8000);
       return () => clearTimeout(timer);
     }
   }, [hasError, currentChannel, navigation]);
@@ -156,17 +186,17 @@ export function PlayerScreen({ route, navigation }: Props) {
 
   const onPlayerError = (error: unknown) => {
     if (__DEV__) { console.warn('[PlayerScreen] Playback error:', error); }
-    handlePrimaryStreamError('Playback error or channel offline.');
+    handleStreamError(3, 'Playback error or channel offline.');
   };
 
   return (
     <View style={styles.container}>
       {/* Video Player Section */}
       <View style={styles.playerWrapper}>
-        {hasPrimaryDirectSource && currentChannel.streamUrl ? (
-          /* Tier 1: Direct 1080p HLS .m3u8 Feed */
+        {activeTier === 1 && currentChannel.streamUrl ? (
+          /* Tier 1: Primary Direct 1080p HLS .m3u8 Feed */
           <WebView
-            key={`${currentChannel.id}-hls`}
+            key={`${currentChannel.id}-hls-t1`}
             source={{ html: getHlsHtml(currentChannel.streamUrl) }}
             style={styles.webViewBase}
             containerStyle={styles.webViewContainer}
@@ -179,21 +209,47 @@ export function PlayerScreen({ route, navigation }: Props) {
             scalesPageToFit={false}
             showsHorizontalScrollIndicator={false}
             showsVerticalScrollIndicator={false}
-            onError={() => handlePrimaryStreamError('HLS stream loading error.')}
+            onError={() => handleStreamError(1, 'Primary HLS stream loading error.')}
             onMessage={(event) => {
               try {
                 const data = JSON.parse(event.nativeEvent.data);
                 if (data && data.type === 'HLS_ERROR') {
-                  handlePrimaryStreamError('HLS stream offline.');
+                  handleStreamError(1, 'Primary HLS stream offline.');
                 }
               } catch {}
             }}
           />
-        ) : hasPrimaryDirectSource && currentChannel.embedUrl ? (
-          /* Tier 2: Official Channel Web Embed */
+        ) : activeTier === 2 && currentChannel.m3uUrl ? (
+          /* Tier 2A: Secondary Direct HLS .m3u8 Feed */
+          <WebView
+            key={`${currentChannel.id}-hls-t2`}
+            source={{ html: getHlsHtml(currentChannel.m3uUrl) }}
+            style={styles.webViewBase}
+            containerStyle={styles.webViewContainer}
+            allowsInlineMediaPlayback={true}
+            allowsFullscreenVideo={true}
+            mediaPlaybackRequiresUserAction={false}
+            javaScriptEnabled={true}
+            domStorageEnabled={true}
+            originWhitelist={['*']}
+            scalesPageToFit={false}
+            showsHorizontalScrollIndicator={false}
+            showsVerticalScrollIndicator={false}
+            onError={() => handleStreamError(2, 'Secondary HLS stream loading error.')}
+            onMessage={(event) => {
+              try {
+                const data = JSON.parse(event.nativeEvent.data);
+                if (data && data.type === 'HLS_ERROR') {
+                  handleStreamError(2, 'Secondary HLS stream offline.');
+                }
+              } catch {}
+            }}
+          />
+        ) : activeTier === 2 && currentChannel.embedUrl ? (
+          /* Tier 2B: Official Channel Web Embed */
           <WebView
             ref={embedWebViewRef as any}
-            key={`${currentChannel.id}-embed`}
+            key={`${currentChannel.id}-embed-t2`}
             source={{ uri: sanitizeUrl(currentChannel.embedUrl) }}
             style={styles.webViewBase}
             containerStyle={styles.webViewContainer}
@@ -208,10 +264,10 @@ export function PlayerScreen({ route, navigation }: Props) {
             showsVerticalScrollIndicator={false}
             injectedJavaScript={EMBED_AUTOPLAY_SCRIPT}
             userAgent="Mozilla/5.0 (SMART-TV; Linux; Tizen 6.0) AppleWebKit/538.1 (KHTML, like Gecko) Version/6.0 TV Safari/538.1"
-            onError={() => handlePrimaryStreamError('Embed loading error.')}
+            onError={() => handleStreamError(2, 'Embed loading error.')}
           />
-        ) : videoId && !hasError ? (
-          /* Tier 3: Resolved YouTube Live Stream (Primary or Fallback) */
+        ) : activeTier === 3 && videoId && !hasError ? (
+          /* Tier 3: Resolved YouTube Live Stream (Fallback) */
           <ConsentSafeYouTubePlayer
             ref={ytPlayerRef}
             height={height}
@@ -235,24 +291,21 @@ export function PlayerScreen({ route, navigation }: Props) {
           />
         ) : (
           <View style={styles.loadingWrapper}>
-            {isLoading ? (
+            {activeTier === 3 && isLoading ? (
               <ActivityIndicator size="large" color="#ffffff" />
-            ) : (
-              <View style={styles.offlineBox}>
-                <Text style={styles.offlineEmoji}>📡</Text>
-                <Text style={styles.offlineText}>Channel is Offline</Text>
-              </View>
-            )}
+            ) : null}
           </View>
         )}
       </View>
 
-      {/* Focus Grabber Overlay to retain TV Focus in React Native */}
-      <Pressable
-        hasTVPreferredFocus={true}
-        onPress={handlePressScreen}
-        style={styles.focusGrabber}
-      />
+      {/* Focus Grabber Overlay to retain TV Focus in React Native when playing */}
+      {!hasError && (
+        <Pressable
+          hasTVPreferredFocus={true}
+          onPress={handlePressScreen}
+          style={styles.focusGrabber}
+        />
+      )}
 
       {/* Controls Overlay */}
       <PlayerOverlay
@@ -269,14 +322,12 @@ export function PlayerScreen({ route, navigation }: Props) {
         onBack={handleBack}
       />
 
-      {/* Fallback Overlay for Offline/Errors */}
+      {/* Modern, Clean Fallback Screen component when all Tiers fail */}
       {hasError && (
-        <View style={styles.errorOverlay}>
-          <Text style={styles.errorText}>
-            {playbackError || 'This channel is currently offline.'}
-          </Text>
-          <Text style={styles.errorSubtext}>Returning to grid in 5 seconds...</Text>
-        </View>
+        <PlaybackErrorScreen
+          channelName={currentChannel.name}
+          onReturnToGrid={handleBack}
+        />
       )}
     </View>
   );
@@ -307,38 +358,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  offlineBox: {
-    alignItems: 'center',
-  },
-  offlineEmoji: {
-    fontSize: 50,
-    marginBottom: 10,
-  },
-  offlineText: {
-    color: '#ffffff',
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
   focusGrabber: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: 'transparent',
     zIndex: 1,
-  },
-  errorOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(11, 11, 13, 0.95)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 3,
-  },
-  errorText: {
-    color: '#e24848',
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 8,
-  },
-  errorSubtext: {
-    color: '#8a8a8f',
-    fontSize: 16,
   },
 });
