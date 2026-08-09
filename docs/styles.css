@@ -769,3 +769,158 @@
     footer a:hover {
       text-decoration: underline;
     }
+
+    /* Mobile TV Simulator Notice Banner */
+    .mobile-tv-notice {
+      display: none;
+      background: linear-gradient(135deg, rgba(239, 68, 68, 0.12), rgba(59, 130, 246, 0.12));
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      border-radius: 12px;
+      padding: 20px 24px;
+      margin-bottom: 24px;
+      text-align: center;
+    }
+
+    .mobile-notice-badge {
+      display: inline-block;
+      background: rgba(239, 68, 68, 0.2);
+      color: #fca5a5;
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      padding: 4px 12px;
+      border-radius: 16px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .mobile-notice-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 8px;
+    }
+
+    .mobile-notice-desc {
+      font-size: 0.9rem;
+      color: #cbd5e1;
+      line-height: 1.5;
+      max-width: 680px;
+      margin: 0 auto;
+    }
+
+    /* Mobile & Tablet Responsive Media Queries */
+    @media (max-width: 992px) {
+      .mobile-tv-notice {
+        display: block;
+      }
+
+      .tab-selector,
+      .tv-simulator-outer,
+      .remote-panel {
+        display: none !important;
+      }
+
+      .nav-container {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .nav-links {
+        width: auto;
+        display: flex;
+        align-items: center;
+      }
+
+      .nav-links .nav-link {
+        display: none !important;
+      }
+
+      .breakdown-grid,
+      .edge-case-grid,
+      .legal-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 768px) {
+      html {
+        scroll-padding-top: 80px;
+      }
+
+      .section {
+        scroll-margin-top: 80px;
+        padding: 40px 0;
+      }
+
+      .hero-title {
+        font-size: 1.85rem;
+      }
+
+      .hero-subtitle {
+        font-size: 0.95rem;
+      }
+
+      .spec-badges-row {
+        gap: 8px;
+      }
+
+      .badge-chip {
+        font-size: 0.75rem;
+        padding: 4px 10px;
+      }
+
+      .breakdown-grid,
+      .edge-case-grid,
+      .legal-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .table-wrapper {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      table {
+        min-width: 640px;
+      }
+
+      .scroll-to-top-btn {
+        bottom: 20px;
+        right: 20px;
+        width: 42px;
+        height: 42px;
+        font-size: 1.1rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .hero-title {
+        font-size: 1.5rem;
+      }
+
+      .container {
+        padding: 0 16px;
+      }
+
+      .section-title {
+        font-size: 1.35rem;
+      }
+
+      .breakdown-card,
+      .legal-card,
+      .edge-case-card {
+        padding: 20px;
+      }
+
+      .github-btn {
+        padding: 6px 14px;
+      }
+
+      .github-btn span {
+        font-size: 0.8rem;
+      }
+    }
+

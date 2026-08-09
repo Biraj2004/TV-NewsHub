@@ -56,42 +56,57 @@ export function PlayerScreen({ route, navigation }: Props) {
   // Overlay Timer Hook — auto-hide after 4 seconds of no select/center press
   const { isVisible, showOverlay, hideOverlay } = useIdleTimer(4000);
 
+  const [tier1Retries, setTier1Retries] = useState<number>(0);
+  const [tier2Retries, setTier2Retries] = useState<number>(0);
+
   // Reset state when channel index changes
   useEffect(() => {
     setPlaybackError(null);
     setIsPlaying(true);
+    setTier1Retries(0);
+    setTier2Retries(0);
     setActiveTier(getInitialTier(currentChannel));
     setLastWatchedChannel(currentChannel.id);
     hideOverlay();
   }, [currentIndex, currentChannel, hideOverlay]);
 
-  // Fallback engine: advance to next tier on error
+  // Fallback engine: advance to next tier on error after patient HLS retries
   const handleStreamError = useCallback((failedTier: number, errorMessage: string) => {
     if (__DEV__) {
-      console.warn(`[PlayerScreen] Stream failed on Tier ${failedTier} (${errorMessage}) for channel ${currentChannel.name}`);
+      console.warn(`[PlayerScreen] Stream issue on Tier ${failedTier} (${errorMessage}) for channel ${currentChannel.name}`);
     }
 
     if (failedTier === 1) {
+      if (tier1Retries < 2) {
+        if (__DEV__) { console.log(`[PlayerScreen] Retrying Tier 1 HLS (Attempt ${tier1Retries + 1})...`); }
+        setTier1Retries((r) => r + 1);
+        return;
+      }
       if (currentChannel.m3uUrl || currentChannel.embedUrl) {
         if (__DEV__) { console.log('[PlayerScreen] Falling back to Tier 2 (m3uUrl/embedUrl)...'); }
         setActiveTier(2);
         return;
       }
       if (currentChannel.youtubeChannelId) {
-        if (__DEV__) { console.log('[PlayerScreen] Falling back to Tier 3 (YouTube Resolver)...'); }
+        if (__DEV__) { console.log('[PlayerScreen] Falling back to Tier 3 (YouTube)...'); }
         setActiveTier(3);
         return;
       }
     } else if (failedTier === 2) {
+      if (tier2Retries < 2) {
+        if (__DEV__) { console.log(`[PlayerScreen] Retrying Tier 2 HLS (Attempt ${tier2Retries + 1})...`); }
+        setTier2Retries((r) => r + 1);
+        return;
+      }
       if (currentChannel.youtubeChannelId) {
-        if (__DEV__) { console.log('[PlayerScreen] Tier 2 failed. Falling back to Tier 3 (YouTube Resolver)...'); }
+        if (__DEV__) { console.log('[PlayerScreen] Tier 2 failed. Falling back to Tier 3 (YouTube)...'); }
         setActiveTier(3);
         return;
       }
     }
 
     setPlaybackError(errorMessage);
-  }, [currentChannel]);
+  }, [currentChannel, tier1Retries, tier2Retries]);
 
   // Navigate to previous channel
   const handlePrevChannel = useCallback(() => {
@@ -196,7 +211,7 @@ export function PlayerScreen({ route, navigation }: Props) {
         {activeTier === 1 && currentChannel.streamUrl ? (
           /* Tier 1: Primary Direct 1080p HLS .m3u8 Feed */
           <WebView
-            key={`${currentChannel.id}-hls-t1`}
+            key={`${currentChannel.id}-hls-t1-retry-${tier1Retries}`}
             source={{ html: getHlsHtml(currentChannel.streamUrl) }}
             style={styles.webViewBase}
             containerStyle={styles.webViewContainer}
@@ -222,7 +237,7 @@ export function PlayerScreen({ route, navigation }: Props) {
         ) : activeTier === 2 && currentChannel.m3uUrl ? (
           /* Tier 2A: Secondary Direct HLS .m3u8 Feed */
           <WebView
-            key={`${currentChannel.id}-hls-t2`}
+            key={`${currentChannel.id}-hls-t2-retry-${tier2Retries}`}
             source={{ html: getHlsHtml(currentChannel.m3uUrl) }}
             style={styles.webViewBase}
             containerStyle={styles.webViewContainer}

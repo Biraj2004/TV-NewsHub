@@ -19,59 +19,102 @@ export const getHlsHtml = (rawStreamUrl: string): string => {
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
   </head>
   <body>
-    <video id="video" autoplay playsinline webkit-playsinline></video>
+    <video id="video" autoplay playsinline webkit-playsinline muted></video>
     <script>
-      var video = document.getElementById('video');
-      var videoSrc = '${streamUrl}';
-      if (Hls.isSupported()) {
-        var hls = new Hls({
-          maxBufferLength: 60,
-          maxMaxBufferLength: 120,
-          maxBufferSize: 60 * 1000 * 1000,
-          maxBufferHole: 0.5,
-          capLevelToPlayerSize: false,
-          startLevel: -1
-        });
-        hls.loadSource(videoSrc);
-        hls.attachMedia(video);
-        hls.on(Hls.Events.MANIFEST_PARSED, function() {
-          if (hls.levels && hls.levels.length > 0) {
-            hls.currentLevel = hls.levels.length - 1; // Force 1080p Full HD max quality
-            hls.autoLevelCapping = -1;
+      (function() {
+        var video = document.getElementById('video');
+        var videoSrc = '${streamUrl}';
+        var isResolved = false;
+        var retryCount = 0;
+
+        function notifySuccess() {
+          if (isResolved) return;
+          isResolved = true;
+          if (timeoutId) clearTimeout(timeoutId);
+          video.muted = false;
+        }
+
+        function notifyError(details) {
+          if (isResolved) return;
+          isResolved = true;
+          if (timeoutId) clearTimeout(timeoutId);
+          if (window.ReactNativeWebView) {
+            window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'HLS_ERROR', details: details }));
           }
-          video.play().catch(function(){});
+        }
+
+        video.addEventListener('playing', notifySuccess);
+        video.addEventListener('timeupdate', function() {
+          if (video.currentTime > 0) notifySuccess();
         });
-        hls.on(Hls.Events.ERROR, function (event, data) {
-          if (data.fatal) {
-            switch (data.type) {
-              case Hls.ErrorTypes.NETWORK_ERROR:
-                hls.startLoad();
-                break;
-              case Hls.ErrorTypes.MEDIA_ERROR:
-                hls.recoverMediaError();
-                break;
-              default:
-                hls.destroy();
-                if (window.ReactNativeWebView) {
-                  window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'HLS_ERROR', details: data.type }));
+
+        var timeoutId = setTimeout(function() {
+          if (!isResolved && (video.paused || video.ended || video.readyState < 2)) {
+            notifyError('timeout');
+          }
+        }, 15000);
+
+        if (Hls.isSupported()) {
+          var hls = new Hls({
+            maxBufferLength: 60,
+            maxMaxBufferLength: 120,
+            maxBufferSize: 60 * 1000 * 1000,
+            maxBufferHole: 0.5,
+            capLevelToPlayerSize: false,
+            startLevel: -1,
+            enableWorker: true
+          });
+          hls.loadSource(videoSrc);
+          hls.attachMedia(video);
+
+          hls.on(Hls.Events.MANIFEST_PARSED, function() {
+            var playPromise = video.play();
+            if (playPromise !== undefined) {
+              playPromise.then(function() {
+                video.muted = false;
+                if (hls.levels && hls.levels.length > 0) {
+                  setTimeout(function() {
+                    if (hls.levels.length > 0) {
+                      hls.currentLevel = hls.levels.length - 1;
+                    }
+                  }, 1000);
                 }
-                break;
+              }).catch(function() {
+                video.muted = true;
+                video.play().catch(function(){});
+              });
             }
-          }
-        });
-        setTimeout(function() {
-          if (video.paused || video.ended || video.readyState < 2) {
-            if (window.ReactNativeWebView) {
-              window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'HLS_ERROR', details: 'timeout' }));
+          });
+
+          hls.on(Hls.Events.ERROR, function (event, data) {
+            if (data.fatal) {
+              switch (data.type) {
+                case Hls.ErrorTypes.NETWORK_ERROR:
+                  if (retryCount < 3) {
+                    retryCount++;
+                    hls.startLoad();
+                  } else {
+                    hls.destroy();
+                    notifyError(data.type);
+                  }
+                  break;
+                case Hls.ErrorTypes.MEDIA_ERROR:
+                  hls.recoverMediaError();
+                  break;
+                default:
+                  hls.destroy();
+                  notifyError(data.type);
+                  break;
+              }
             }
-          }
-        }, 6000);
-      } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-        video.src = videoSrc;
-        video.addEventListener('loadedmetadata', function() {
-          video.play();
-        });
-      }
+          });
+        } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+          video.src = videoSrc;
+          video.addEventListener('loadedmetadata', function() {
+            video.play().catch(function(){});
+          });
+        }
+      })();
     </script>
   </body>
   </html>
